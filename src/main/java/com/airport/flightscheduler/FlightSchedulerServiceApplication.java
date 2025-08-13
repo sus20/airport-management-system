@@ -1,13 +1,11 @@
-package com.airport.flight_scheduler_service;
+package com.airport.flightscheduler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FlighSchedulerServiceApplication {
-
+public class FlightSchedulerServiceApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(FlighSchedulerServiceApplication.class, args);
+		SpringApplication.run(FlightSchedulerServiceApplication.class, args);
 	}
-
 }
