@@ -1,6 +1,7 @@
 package com.airport.flightscheduler.controller;
 
 import com.airport.flightscheduler.domain.Flight;
+import com.airport.flightscheduler.domain.FlightSearchRequest;
 import com.airport.flightscheduler.dto.FlightDTO;
 import com.airport.flightscheduler.enumeration.FlightStatus;
 import com.airport.flightscheduler.service.FlightService;
@@ -64,5 +65,10 @@ public class FlightController {
     public ResponseEntity<FlightStatus> getFlightStatus(@PathVariable ObjectId id) {
         log.debug("GET /flights/{}/status", id);
         return ResponseEntity.ok().body(flightService.getFlightById(id).getStatus());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<FlightDTO>> searchFlights(@Valid @ModelAttribute FlightSearchRequest request){
+        return ResponseEntity.ok(flightService.search(request));
     }
 }
