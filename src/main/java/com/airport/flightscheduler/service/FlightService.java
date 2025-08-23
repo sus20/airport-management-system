@@ -1,6 +1,7 @@
 package com.airport.flightscheduler.service;
 
 import com.airport.flightscheduler.domain.Flight;
+import com.airport.flightscheduler.domain.FlightSearchRequest;
 import com.airport.flightscheduler.dto.FlightDTO;
 import org.bson.types.ObjectId;
 
@@ -16,4 +17,6 @@ public interface FlightService {
     FlightDTO updateFlight(ObjectId id, Flight flight);
 
     void deleteFlight(ObjectId id);
+
+    List<FlightDTO> search(FlightSearchRequest request);
 }
