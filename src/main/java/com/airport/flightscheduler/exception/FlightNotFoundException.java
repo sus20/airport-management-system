@@ -1,7 +1,9 @@
 package com.airport.flightscheduler.exception;
 
-public class FlightNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class FlightNotFoundException extends ApiException {
     public FlightNotFoundException(Object flightId) {
-        super("Flight with id " + flightId + " not found");
+        super("Flight with id " + flightId + " not found", HttpStatus.NOT_FOUND);
     }
 }
