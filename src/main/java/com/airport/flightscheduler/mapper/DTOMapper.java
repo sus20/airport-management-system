@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DTOMapper {
-    Flight toFlight(FlightDTO flightDTO);
     FlightDTO toFlightDTO(Flight flight);
     List<FlightDTO> toFlightDTOs(List<Flight> flights);
 }
