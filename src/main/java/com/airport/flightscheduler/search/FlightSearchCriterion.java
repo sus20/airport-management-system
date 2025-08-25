@@ -1,6 +1,6 @@
-package com.airport.flightscheduler.service.search;
+package com.airport.flightscheduler.search;
 
-import com.airport.flightscheduler.domain.FlightSearchRequest;
+import com.airport.flightscheduler.dto.FlightSearchRequest;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.Optional;
