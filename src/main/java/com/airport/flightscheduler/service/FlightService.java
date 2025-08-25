@@ -1,7 +1,7 @@
 package com.airport.flightscheduler.service;
 
 import com.airport.flightscheduler.domain.Flight;
-import com.airport.flightscheduler.domain.FlightSearchRequest;
+import com.airport.flightscheduler.dto.FlightSearchRequest;
 import com.airport.flightscheduler.dto.FlightDTO;
 import org.bson.types.ObjectId;
 

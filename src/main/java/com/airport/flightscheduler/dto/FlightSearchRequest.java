@@ -1,4 +1,4 @@
-package com.airport.flightscheduler.domain;
+package com.airport.flightscheduler.dto;
 
 import com.airport.flightscheduler.enumeration.FlightStatus;
 import lombok.Data;
