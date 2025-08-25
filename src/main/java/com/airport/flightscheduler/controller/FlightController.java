@@ -1,7 +1,7 @@
 package com.airport.flightscheduler.controller;
 
 import com.airport.flightscheduler.domain.Flight;
-import com.airport.flightscheduler.domain.FlightSearchRequest;
+import com.airport.flightscheduler.dto.FlightSearchRequest;
 import com.airport.flightscheduler.dto.FlightDTO;
 import com.airport.flightscheduler.enumeration.FlightStatus;
 import com.airport.flightscheduler.service.FlightService;
