@@ -1,25 +1,27 @@
-FROM eclipse-temurin:17-jdk-alpine AS builder
+# ---- Build Stage ----
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+# Copy only pom.xml first (to leverage Docker cache for dependencies)
 COPY pom.xml .
+RUN mvn dependency:go-offline
 
-RUN chmod +x mvnw
+# Copy the source
+COPY src ./src
 
-RUN ./mvnw dependency:go-offline -B
+# Build the application (skip tests for faster build)
+RUN mvn clean package -DskipTests
 
-COPY src src
-
-RUN ./mvnw package -DskipTests
-
-FROM eclipse-temurin:17-jre-alpine
+# ---- Run Stage ----
+FROM eclipse-temurin:17-jre-slim
 
 WORKDIR /app
 
+# Copy the packaged jar from the builder image
 COPY --from=builder /app/target/*.jar app.jar
 
+# Expose the application port
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
