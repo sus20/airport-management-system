@@ -1,27 +1,19 @@
-# ---- Build Stage ----
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
-
+# Build stage
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+# or: FROM maven:3.9.6-openjdk-21-slim
 WORKDIR /app
 
-# Copy only pom.xml first (to leverage Docker cache for dependencies)
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
-# Copy the source
 COPY src ./src
+RUN mvn clean package -Dmaven.test.skip=true
 
-# Build the application (skip tests for faster build)
-RUN mvn clean package -DskipTests
-
-# ---- Run Stage ----
-FROM eclipse-temurin:17-jre-slim
+# Runtime stage
+FROM openjdk:21-slim
 
 WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 
-# Copy the packaged jar from the builder image
-COPY --from=builder /app/target/*.jar app.jar
-
-# Expose the application port
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
