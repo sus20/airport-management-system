@@ -72,6 +72,20 @@ services:
     networks:
       - flight_net
 
+  flight-scheduler:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: flight-scheduler
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+      - mongo
+    networks:
+      - flight_net
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 volumes:
   mongo_data:
     name: flight_mongo_data
