@@ -2,13 +2,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: flight-scheduler-config
+  namespace: airport-management
 data:
   application.properties: |
     spring.application.name=Flight Scheduler Service
     
     spring.data.mongodb.uri=mongodb://root:example@mongo:27017/flightdb?authSource=admin
     
-    spring.kafka.bootstrap-servers=kafka:9092
+    spring.kafka.bootstrap-servers=kafka-service:9092
 
     spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
     spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
