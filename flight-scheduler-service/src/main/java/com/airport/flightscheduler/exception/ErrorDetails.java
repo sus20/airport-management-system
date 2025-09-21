@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class ErrorDetails {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int status;
+    private final String error;
     private final String message;
     private final String path;
 }
