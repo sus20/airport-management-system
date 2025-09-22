@@ -1,0 +1,25 @@
+package com.airport.passenger_checkin_service.mapper;
+
+import com.airport.passenger_checkin_service.domain.Passenger;
+import com.airport.passenger_checkin_service.dto.PassengerRequest;
+import com.airport.passenger_checkin_service.dto.PassengerResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "spring")
+public interface PassengerMapper {
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Passenger toEntity(PassengerRequest request);
+
+    @Mapping(target = "id", expression = "java(passenger.getId() != null ? passenger.getId().toHexString() : null)")
+    PassengerResponse toResponse(Passenger passenger);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateEntityFromRequest(PassengerRequest request, @MappingTarget Passenger passenger);
+}
