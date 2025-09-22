@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public List<PassengerResponse> getAllPassengers() {
-        return List.of();
+        return passengerRepository.findAll().stream().map(passengerMapper::toResponse).collect(Collectors.toList());
     }
 
     @Override
