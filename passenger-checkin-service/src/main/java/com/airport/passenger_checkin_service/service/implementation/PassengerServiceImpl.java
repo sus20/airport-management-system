@@ -4,12 +4,14 @@ import com.airport.passenger_checkin_service.domain.Passenger;
 import com.airport.passenger_checkin_service.dto.PassengerRequest;
 import com.airport.passenger_checkin_service.dto.PassengerResponse;
 import com.airport.passenger_checkin_service.exception.DuplicatePassengerException;
+import com.airport.passenger_checkin_service.exception.PassengerNotFoundException;
 import com.airport.passenger_checkin_service.mapper.PassengerMapper;
 import com.airport.passenger_checkin_service.repository.PassengerRepository;
 import com.airport.passenger_checkin_service.service.PassengerService;
 import com.airport.passenger_checkin_service.service.validation.PassengerUniquenessRule;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +42,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(ObjectId id) {
-        return null;
+        return passengerRepository.findById(id)
+                .map(passengerMapper::toResponse)
+                .orElseThrow(()-> new PassengerNotFoundException(String.format("Passenger with given id %s not found!", id)));
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.airport.passenger_checkin_service.controller;
 import com.airport.passenger_checkin_service.dto.PassengerRequest;
 import com.airport.passenger_checkin_service.dto.PassengerResponse;
 import com.airport.passenger_checkin_service.service.PassengerService;
-import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,5 +24,10 @@ public class PassengerController {
     @GetMapping
     public ResponseEntity<List<PassengerResponse>> getPassengers() {
         return ResponseEntity.ok(passengerService.getAllPassengers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable ObjectId id) {
+        return ResponseEntity.ok(passengerService.getPassengerById(id));
     }
 }
