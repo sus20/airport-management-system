@@ -5,5 +5,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CheckInRepository extends MongoRepository<CheckIn, ObjectId> {
+    boolean existsByFlightIdAndPassengerId(String flightId, String passengerId);
     boolean existsByFlightIdAndSeatNumbersContains(String flightId, String seatNumber);
 }
