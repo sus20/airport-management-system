@@ -64,4 +64,36 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errorDetails);
     }
+
+    @ExceptionHandler(DuplicateCheckInException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateCheckIn(
+            DuplicateCheckInException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(SeatAlreadyTakenException.class)
+    public ResponseEntity<ErrorResponse> handleSeatAlreadyTaken(
+            SeatAlreadyTakenException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 }
