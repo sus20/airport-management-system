@@ -9,9 +9,9 @@ import com.airport.passenger_checkin_service.mapper.PassengerMapper;
 import com.airport.passenger_checkin_service.repository.PassengerRepository;
 import com.airport.passenger_checkin_service.service.PassengerService;
 import com.airport.passenger_checkin_service.service.validation.PassengerUniquenessRule;
+import com.mongodb.DuplicateKeyException;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class PassengerServiceImpl implements PassengerService {
         try {
             Passenger savedPassenger = passengerRepository.save(passenger);
             return passengerMapper.toResponse(savedPassenger);
-        } catch (DuplicatePassengerException exception) {
+        } catch (DuplicateKeyException exception) {
             throw new DuplicatePassengerException(
                     String.format("Passenger with passport %s (%s) already exists",
                             request.getPassportNumber(), request.getPassportCountry()));
@@ -42,9 +42,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse getPassengerById(ObjectId id) {
-        return passengerRepository.findById(id)
-                .map(passengerMapper::toResponse)
-                .orElseThrow(()-> new PassengerNotFoundException(String.format("Passenger with given id %s not found!", id)));
+        return passengerMapper.toResponse(findPassengerById(id));
     }
 
     @Override
@@ -54,11 +52,23 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PassengerResponse updatePassenger(ObjectId id, PassengerRequest request) {
-        return null;
+        Passenger passenger = findPassengerById(id);
+        passengerMapper.updateEntityFromRequest(request, passenger);
+        return passengerMapper.toResponse(passengerRepository.save(passenger));
     }
 
     @Override
     public void deletePassenger(ObjectId id) {
+        if (!passengerRepository.existsById(id)) {
+            throw new PassengerNotFoundException(
+                    String.format("Passenger with id %s not found!", id));
+        }
+        passengerRepository.deleteById(id);
+    }
 
+    private Passenger findPassengerById(ObjectId id) {
+        return passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerNotFoundException(
+                        String.format("Passenger with given id %s not found!", id)));
     }
 }
