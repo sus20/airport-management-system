@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.util.Set;
 
-@Document(collection = "checkins")
+@Document(collection = "flight-checkins")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +25,7 @@ import java.util.Set;
                 unique = true
         )
 })
-public class CheckIn {
+public class FlightCheckInRecord {
 
     @Id
     private ObjectId id;
