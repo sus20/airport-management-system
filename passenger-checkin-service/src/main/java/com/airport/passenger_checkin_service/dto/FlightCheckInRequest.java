@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class CheckInRequest {
+public class FlightCheckInRequest {
     @NotBlank(message = "Flight ID is required")
     private String flightId;
     @NotBlank(message = "Passenger ID is required")
