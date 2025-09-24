@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.Set;
 
 @Data
-public class CheckInResponse {
+public class FlightCheckInResponse {
     private String id;
     private String flightId;
     private String passengerId;
