@@ -1,6 +1,6 @@
 package com.airport.passenger_checkin_service.search;
 
-import com.airport.passenger_checkin_service.dto.PassengerRequest;
+import com.airport.passenger_checkin_service.dto.PassengerSearchRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,22 +16,19 @@ import java.util.Optional;
 public class SearchSpecification {
     private final List<SearchCriterion> criteria;
 
-    public Query toQuery(PassengerRequest request) {
+    public Query toQuery(PassengerSearchRequest request) {
         List<Criteria> parts = criteria.stream()
                 .map(criterion -> criterion.toCriteria(request))
                 .flatMap(Optional::stream)
                 .toList();
-
-        log.info("Criteria parts: {}", criteria);
 
         Query query = new Query();
         if (!parts.isEmpty()) {
             query.addCriteria(new Criteria().andOperator(parts.toArray(new Criteria[0])));
         }
 
-        log.info("Criteria beans: {}", criteria);
+        log.info("Criteria query: {}", query);
 
         return query;
     }
-
 }
