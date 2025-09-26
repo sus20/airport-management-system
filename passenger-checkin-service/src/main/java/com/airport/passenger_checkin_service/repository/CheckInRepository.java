@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface CheckInRepository extends MongoRepository<FlightCheckInRecord, ObjectId> {
-    List<FlightCheckInRecord> findByFlightId(String flightId);
-    boolean existsByFlightIdAndPassengerId(String flightId, String passengerId);
-    boolean existsByFlightIdAndSeatNumbersContains(String flightId, String seatNumber);
+    List<FlightCheckInRecord> findByFlightId(ObjectId flightId);
+    boolean existsByFlightIdAndPassportNumber(ObjectId flightId, String passportNumber);
+    boolean existsByFlightIdAndSeatNumbersContains(ObjectId flightId, String seatNumber);
 }
