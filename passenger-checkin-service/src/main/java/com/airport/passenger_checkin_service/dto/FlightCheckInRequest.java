@@ -8,9 +8,11 @@ import java.util.Set;
 @Data
 public class FlightCheckInRequest {
     @NotBlank(message = "Flight ID is required")
+    @Pattern(regexp = "^[a-fA-F0-9]{24}$")
     private String flightId;
-    @NotBlank(message = "Passenger ID is required")
-    private String passengerId;
+
+    @NotBlank(message = "Passport Number is required")
+    private String passportNumber;
 
     @NotEmpty(message = "At least one seat number must be provided")
     @Size(max = 2, message = "A passenger cannot reserve more than 2 seats")
