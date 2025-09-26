@@ -21,7 +21,7 @@ import java.util.Set;
 @CompoundIndexes({
         @CompoundIndex(
                 name = "unique_flight_passenger_idx",
-                def = "{'flightId': 1, 'passengerId': 1}",
+                def = "{'flightId': 1, 'passportNumber': 1}",
                 unique = true
         )
 })
@@ -29,16 +29,15 @@ public class FlightCheckInRecord {
 
     @Id
     private ObjectId id;
-
-    private String flightId;
-    private String passengerId;
+    private ObjectId flightId;
+    private String passportNumber;
     private Set<String> seatNumbers;
     private boolean baggageChecked;
     private int baggageCount;
+    private String boardingPassUrl;
 
     @CreatedDate
     private Instant checkInTime;
-    private String boardingPassUrl;
 
     @LastModifiedDate
     private Instant updatedAt;
