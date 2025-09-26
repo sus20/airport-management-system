@@ -2,8 +2,10 @@ package com.airport.passenger_checkin_service.exception;
 
 import com.airport.passenger_checkin_service.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -63,6 +65,21 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ConversionFailedException.class, IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidObjectId(
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message("Invalid ID format: must be a 24-character hex ObjectId")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(DuplicateCheckInException.class)
