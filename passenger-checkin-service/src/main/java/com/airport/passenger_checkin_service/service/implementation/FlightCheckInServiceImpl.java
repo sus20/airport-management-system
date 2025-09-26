@@ -24,10 +24,18 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
     public FlightCheckInResponse createCheckIn(FlightCheckInRequest request) {
         validatePassengerNotAlreadyCheckedIn(request);
         validateSeatsAvailability(request);
-        FlightCheckInRecord checkIn = createCheckInEntity(request);
-        FlightCheckInRecord savedCheckIn = checkInRepository.save(checkIn);
 
-        return checkInMapper.toResponse(savedCheckIn);
+        FlightCheckInRecord checkIn = checkInMapper.toEntity(request);
+        FlightCheckInRecord saved = checkInRepository.save(checkIn);
+
+        String boardingPassUrl = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/boarding-pass/")
+                .path(saved.getId().toHexString())
+                .toUriString();
+        saved.setBoardingPassUrl(boardingPassUrl);
+        FlightCheckInRecord updated = checkInRepository.save(saved);
+        return checkInMapper.toResponse(updated);
     }
 
     @Override
@@ -39,7 +47,7 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
 
     @Override
     public List<FlightCheckInResponse> getCheckInsByFlightId(ObjectId flightId) {
-        List<FlightCheckInRecord> checkIns = checkInRepository.findByFlightId(flightId.toHexString());
+        List<FlightCheckInRecord> checkIns = checkInRepository.findByFlightId(flightId);
         return checkInMapper.toResponses(checkIns);
     }
 
@@ -77,35 +85,24 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
 
 
     private void validatePassengerNotAlreadyCheckedIn(FlightCheckInRequest request) {
-        if (checkInRepository.existsByFlightIdAndPassengerId(request.getFlightId(), request.getPassengerId())) {
-            throw new DuplicateCheckInException(request.getFlightId(), request.getPassengerId());
+        ObjectId flightId = new ObjectId(request.getFlightId());
+        String passportNumber = request.getPassportNumber();
+        if (checkInRepository.existsByFlightIdAndPassportNumber(flightId, passportNumber)) {
+            throw new DuplicateCheckInException(flightId.toHexString(), passportNumber);
         }
     }
 
     private void validateSeatsAvailability(FlightCheckInRequest request) {
         if (request.getSeatNumbers() != null && !request.getSeatNumbers().isEmpty()) {
+            ObjectId flightId = new ObjectId(request.getFlightId());
             List<String> takenSeats = request.getSeatNumbers().stream()
-                    .filter(seat -> checkInRepository.existsByFlightIdAndSeatNumbersContains(request.getFlightId(), seat))
+                    .filter(seat -> checkInRepository.existsByFlightIdAndSeatNumbersContains(flightId, seat))
                     .toList();
 
             if (!takenSeats.isEmpty()) {
-                throw new SeatAlreadyTakenException(request.getFlightId(), takenSeats);
+                throw new SeatAlreadyTakenException(flightId.toHexString(), takenSeats);
             }
         }
     }
 
-    private FlightCheckInRecord createCheckInEntity(FlightCheckInRequest request) {
-        FlightCheckInRecord checkIn = checkInMapper.toEntity(request);
-        checkIn.setId(new ObjectId());
-
-        String boardingPassUrl = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/boarding-pass/")
-                .path(checkIn.getId().toHexString())
-                .toUriString();
-
-        checkIn.setBoardingPassUrl(boardingPassUrl);
-
-        return checkIn;
-    }
 }
