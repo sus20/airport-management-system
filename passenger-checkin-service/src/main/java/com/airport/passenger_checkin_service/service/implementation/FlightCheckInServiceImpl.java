@@ -80,9 +80,11 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
 
     @Override
     public void cancelCheckIn(ObjectId checkInId) {
-
+        if (!checkInRepository.existsById(checkInId)) {
+            throw new FlightCheckInNotFoundException("Flight check-in with ID " + checkInId + " was not found.");
+        }
+        checkInRepository.deleteById(checkInId);
     }
-
 
     private void validatePassengerNotAlreadyCheckedIn(FlightCheckInRequest request) {
         ObjectId flightId = new ObjectId(request.getFlightId());
