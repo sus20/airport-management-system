@@ -9,11 +9,10 @@ import java.util.Set;
 public class FlightCheckInResponse {
     private String id;
     private String flightId;
-    private String passengerId;
     private Set<String> seatNumbers;
     private boolean baggageChecked;
     private int baggageCount;
-    private Instant checkInTime;
     private String boardingPassUrl;
+    private Instant checkInTime;
     private Instant updatedAt;
 }
