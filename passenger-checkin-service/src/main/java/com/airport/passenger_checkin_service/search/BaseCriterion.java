@@ -9,7 +9,7 @@ public abstract class BaseCriterion implements SearchCriterion {
     protected Optional<Criteria> matchFieldWithCaseInsensitiveRegex(String field, String value) {
         if (value == null || value.isBlank()) return Optional.empty();
         return Optional.of(
-                Criteria.where(field).regex("^" + Pattern.compile(value.trim(), Pattern.CASE_INSENSITIVE))
+                Criteria.where(field).regex(Pattern.compile("^" + value.trim(), Pattern.CASE_INSENSITIVE))
         );
     }
 
