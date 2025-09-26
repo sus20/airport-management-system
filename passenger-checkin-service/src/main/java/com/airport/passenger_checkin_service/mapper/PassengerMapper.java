@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface PassengerMapper {
 
@@ -17,6 +19,7 @@ public interface PassengerMapper {
 
     @Mapping(target = "id", expression = "java(passenger.getId() != null ? passenger.getId().toHexString() : null)")
     PassengerResponse toResponse(Passenger passenger);
+    List<PassengerResponse> toPassengerResponses(List<Passenger> passengers);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
