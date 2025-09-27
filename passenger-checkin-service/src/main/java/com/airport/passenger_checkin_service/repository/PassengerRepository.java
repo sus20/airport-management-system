@@ -1,6 +1,6 @@
 package com.airport.passenger_checkin_service.repository;
 
-import com.airport.passenger_checkin_service.domain.Passenger;
+import com.airport.passenger_checkin_service.domain.entity.Passenger;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

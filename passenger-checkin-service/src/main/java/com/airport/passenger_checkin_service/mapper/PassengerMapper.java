@@ -1,8 +1,8 @@
 package com.airport.passenger_checkin_service.mapper;
 
-import com.airport.passenger_checkin_service.domain.Passenger;
-import com.airport.passenger_checkin_service.dto.PassengerRequest;
-import com.airport.passenger_checkin_service.dto.PassengerResponse;
+import com.airport.passenger_checkin_service.domain.entity.Passenger;
+import com.airport.passenger_checkin_service.domain.dto.request.PassengerRequest;
+import com.airport.passenger_checkin_service.domain.dto.response.PassengerResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -1,17 +1,24 @@
 package com.airport.passenger_checkin_service.service.implementation;
 
-import com.airport.passenger_checkin_service.domain.FlightCheckInRecord;
-import com.airport.passenger_checkin_service.dto.FlightCheckInRequest;
-import com.airport.passenger_checkin_service.dto.FlightCheckInResponse;
+import com.airport.passenger_checkin_service.domain.entity.FlightCheckInRecord;
+import com.airport.passenger_checkin_service.domain.enums.CheckInStatus;
+import com.airport.passenger_checkin_service.domain.enums.FlightStatus;
+import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInRequest;
+import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.exception.*;
+import com.airport.passenger_checkin_service.domain.event.CheckInEvent;
+import com.airport.passenger_checkin_service.domain.entity.Flight;
+import com.airport.passenger_checkin_service.kafka.CheckInEventProducer;
 import com.airport.passenger_checkin_service.mapper.CheckInMapper;
 import com.airport.passenger_checkin_service.repository.CheckInRepository;
+import com.airport.passenger_checkin_service.repository.FlightRepository;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -19,9 +26,12 @@ import java.util.List;
 public class FlightCheckInServiceImpl implements FlightCheckInService {
     private final CheckInRepository checkInRepository;
     private final CheckInMapper checkInMapper;
+    private final FlightRepository flightRepository;
+    private final CheckInEventProducer eventProducer;
 
     @Override
     public FlightCheckInResponse createCheckIn(FlightCheckInRequest request) {
+        validateFlight(request.getFlightNumber());
         validatePassengerNotAlreadyCheckedIn(request);
         validateSeatsAvailability(request);
 
@@ -34,7 +44,15 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
                 .path(saved.getId().toHexString())
                 .toUriString();
         saved.setBoardingPassUrl(boardingPassUrl);
+
         FlightCheckInRecord updated = checkInRepository.save(saved);
+
+        eventProducer.sendCheckInEvent(CheckInEvent.builder()
+                .eventType(CheckInStatus.CHECKEDIN)
+                .timestamp(Instant.now())
+                .build()
+        );
+
         return checkInMapper.toResponse(updated);
     }
 
@@ -46,8 +64,8 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
     }
 
     @Override
-    public List<FlightCheckInResponse> getCheckInsByFlightId(ObjectId flightId) {
-        List<FlightCheckInRecord> checkIns = checkInRepository.findByFlightId(flightId);
+    public List<FlightCheckInResponse> getCheckInsByFlightNumber(String flightNumber) {
+        List<FlightCheckInRecord> checkIns = checkInRepository.findByFlightNumber(flightNumber);
         return checkInMapper.toResponses(checkIns);
     }
 
@@ -80,29 +98,37 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
 
     @Override
     public void cancelCheckIn(ObjectId checkInId) {
-        if (!checkInRepository.existsById(checkInId)) {
-            throw new FlightCheckInNotFoundException("Flight check-in with ID " + checkInId + " was not found.");
-        }
         checkInRepository.deleteById(checkInId);
     }
 
+    private void validateFlight(String flightNumber) {
+        Flight flight = flightRepository.findByFlightNumber(flightNumber)
+                .orElseThrow(() -> new FlightNotFoundException("Flight " + flightNumber + " not found"));
+
+        if(flight.getStatus() == FlightStatus.CANCELLED
+        || flight.getStatus() == FlightStatus.ARRIVED
+        || flight.getStatus() == FlightStatus.DEPARTED){
+            throw new FlightUnavailableException("Check-in not allowed for flight: " + flightNumber + "\n See the Status! ");
+        }
+    }
+
     private void validatePassengerNotAlreadyCheckedIn(FlightCheckInRequest request) {
-        ObjectId flightId = new ObjectId(request.getFlightId());
+        String flightNumber = request.getFlightNumber();
         String passportNumber = request.getPassportNumber();
-        if (checkInRepository.existsByFlightIdAndPassportNumber(flightId, passportNumber)) {
-            throw new DuplicateCheckInException(flightId.toHexString(), passportNumber);
+        if (checkInRepository.existsByFlightNumberAndPassportNumber(flightNumber, passportNumber)) {
+            throw new DuplicateCheckInException(flightNumber, passportNumber);
         }
     }
 
     private void validateSeatsAvailability(FlightCheckInRequest request) {
         if (request.getSeatNumbers() != null && !request.getSeatNumbers().isEmpty()) {
-            ObjectId flightId = new ObjectId(request.getFlightId());
+            String flightNumber = request.getFlightNumber();
             List<String> takenSeats = request.getSeatNumbers().stream()
-                    .filter(seat -> checkInRepository.existsByFlightIdAndSeatNumbersContains(flightId, seat))
+                    .filter(seat -> checkInRepository.existsByFlightNumberAndSeatNumbersContains(flightNumber, seat))
                     .toList();
 
             if (!takenSeats.isEmpty()) {
-                throw new SeatAlreadyTakenException(flightId.toHexString(), takenSeats);
+                throw new SeatAlreadyTakenException(flightNumber, takenSeats);
             }
         }
     }

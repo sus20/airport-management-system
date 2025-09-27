@@ -1,8 +1,8 @@
 package com.airport.passenger_checkin_service.controller;
 
-import com.airport.passenger_checkin_service.dto.PassengerRequest;
-import com.airport.passenger_checkin_service.dto.PassengerResponse;
-import com.airport.passenger_checkin_service.dto.PassengerSearchRequest;
+import com.airport.passenger_checkin_service.domain.dto.request.PassengerRequest;
+import com.airport.passenger_checkin_service.domain.dto.response.PassengerResponse;
+import com.airport.passenger_checkin_service.domain.dto.request.PassengerSearchRequest;
 import com.airport.passenger_checkin_service.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

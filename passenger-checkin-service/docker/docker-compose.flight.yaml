@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  flight-db:
+    image: mongo:6.0
+    container_name: flight-db
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - flight_mongo_data:/data/db
+    networks:
+      - shared_net
+
+  flight-db-admin:
+    image: mongo-express
+    container_name: flight-db-admin
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: flight-db
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGOEXPRESS_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGOEXPRESS_PASSWORD}
+    depends_on:
+      - flight-db
+    networks:
+      - shared_net
+
+  flight-scheduler-service:
+    image: sussap/flight-scheduler-service:latest
+    container_name: flight-scheduler-service
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@flight-db:27017/flights?authSource=admin
+    depends_on:
+      - flight-db
+    networks:
+      - shared_net
+volumes:
+  flight_mongo_data:
+    name: flight_mongo_data
+
+networks:
+  shared_net:
+    external: true

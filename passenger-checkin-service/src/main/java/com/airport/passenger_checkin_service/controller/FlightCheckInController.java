@@ -1,7 +1,7 @@
 package com.airport.passenger_checkin_service.controller;
 
-import com.airport.passenger_checkin_service.dto.FlightCheckInRequest;
-import com.airport.passenger_checkin_service.dto.FlightCheckInResponse;
+import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInRequest;
+import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,9 @@ public class FlightCheckInController {
         return ResponseEntity.ok(checkInService.getCheckInById(id));
     }
 
-    @GetMapping("/flight/{flightId}")
-    public ResponseEntity<List<FlightCheckInResponse>> getCheckInsByFlight(@PathVariable ObjectId flightId) {
-        return ResponseEntity.ok(checkInService.getCheckInsByFlightId(flightId));
+    @GetMapping("/flight/{flightNumber}")
+    public ResponseEntity<List<FlightCheckInResponse>> getCheckInsByFlight(@PathVariable String flightNumber) {
+        return ResponseEntity.ok(checkInService.getCheckInsByFlightNumber(flightNumber));
     }
 
     @PutMapping("/{checkInId}/seats")
@@ -49,9 +49,10 @@ public class FlightCheckInController {
         return ResponseEntity.ok(checkInService.updateBaggageInfo(checkInId, baggageCount));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelCheckIn(@PathVariable ObjectId id) {
-        checkInService.cancelCheckIn(id);
+    @DeleteMapping("/{checkInId}")
+    public ResponseEntity<Void> cancelCheckIn(@PathVariable ObjectId checkInId) {
+        checkInService.cancelCheckIn(checkInId);
         return ResponseEntity.noContent().build();
     }
+
 }
