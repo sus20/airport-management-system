@@ -1,6 +1,5 @@
-package com.airport.flightscheduler.dto;
+package com.airport.flightscheduler.domain.dto.request;
 
-import com.airport.flightscheduler.enumeration.FlightStatus;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,7 +12,6 @@ public class FlightSearchRequest {
     private String airline;
     private String origin;
     private String destination;
-    private FlightStatus status;
     private String aircraftType;
     private String gate;
     private String terminal;
