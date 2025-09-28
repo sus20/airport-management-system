@@ -1,6 +1,6 @@
 package com.airport.flightscheduler.service;
 
-import com.airport.flightscheduler.domain.FlightEvent;
+import com.airport.flightscheduler.domain.event.FlightEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
