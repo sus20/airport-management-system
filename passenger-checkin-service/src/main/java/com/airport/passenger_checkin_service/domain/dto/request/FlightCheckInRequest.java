@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Data
 public class FlightCheckInRequest {
-    @NotBlank(message = "Flight ID is required")
+    @NotBlank(message = "Flight Number is required")
     @Pattern(regexp = "^[A-Z0-9]{2,3}[0-9]{1,4}$",
             message = "Flight number must be like EK101 or LH789")
     private String flightNumber;
