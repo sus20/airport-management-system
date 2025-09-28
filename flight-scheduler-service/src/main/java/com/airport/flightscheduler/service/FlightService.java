@@ -1,22 +1,22 @@
 package com.airport.flightscheduler.service;
 
-import com.airport.flightscheduler.domain.Flight;
-import com.airport.flightscheduler.dto.FlightSearchRequest;
-import com.airport.flightscheduler.dto.FlightDTO;
+import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
+import com.airport.flightscheduler.domain.dto.request.FlightRequest;
+import com.airport.flightscheduler.domain.dto.response.FlightResponse;
 import org.bson.types.ObjectId;
 
 import java.util.List;
 
 public interface FlightService {
-    FlightDTO createFlight(Flight flight);
+    FlightResponse createFlight(FlightRequest request);
 
-    List<FlightDTO> getAllFlights(int page, int size);
+    List<FlightResponse> getAllFlights(int page, int size);
 
-    FlightDTO getFlightById(ObjectId id);
+    FlightResponse getFlightById(ObjectId id);
 
-    FlightDTO updateFlight(ObjectId id, Flight flight);
+    FlightResponse updateFlight(ObjectId id, FlightRequest request);
 
     void deleteFlight(ObjectId id);
 
-    List<FlightDTO> search(FlightSearchRequest request);
+    List<FlightResponse> search(FlightSearchRequest request);
 }
