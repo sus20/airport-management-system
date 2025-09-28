@@ -1,15 +1,16 @@
 package com.airport.flightscheduler.service.implementation;
 
-import com.airport.flightscheduler.domain.Flight;
-import com.airport.flightscheduler.domain.FlightEvent;
-import com.airport.flightscheduler.dto.FlightSearchRequest;
-import com.airport.flightscheduler.dto.FlightDTO;
+import com.airport.flightscheduler.domain.entity.Flight;
+import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
+import com.airport.flightscheduler.domain.dto.request.FlightRequest;
+import com.airport.flightscheduler.domain.dto.response.FlightResponse;
+import com.airport.flightscheduler.exception.FlightAlreadyExistsException;
 import com.airport.flightscheduler.exception.FlightNotFoundException;
-import com.airport.flightscheduler.mapper.DTOMapper;
+import com.airport.flightscheduler.kafka.producer.FlightEventPublisher;
+import com.airport.flightscheduler.mapper.FlightMapper;
 import com.airport.flightscheduler.repository.FlightRepository;
-import com.airport.flightscheduler.service.FlightEventProducer;
 import com.airport.flightscheduler.service.FlightService;
-import com.airport.flightscheduler.search.FlightSearchSpecification;
+import com.airport.flightscheduler.specification.FlightSearchSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -21,82 +22,83 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 
-import java.time.Instant;
 import java.util.List;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class FlightServiceImpl implements FlightService {
-    private final FlightRepository flightRepo;
+    private final FlightRepository flightRepository;
     private final FlightSearchSpecification flightSearchSpecification;
-    private final DTOMapper dtoMapper;
+    private final FlightMapper flightMapper;
     private final MongoTemplate mongoTemplate;
-    private final FlightEventProducer eventProducer;
+    private final FlightEventPublisher flightEventPublisher;
 
     @Override
-    public FlightDTO createFlight(Flight flight) {
-        Flight savedFlight = flightRepo.save(flight);
+    public FlightResponse createFlight(FlightRequest request) {
+        validateFlightDoesNotExist(request);
+
+        Flight flight = flightMapper.toEntity(request);
+        Flight savedFlight = flightRepository.save(flight);
         log.info("Flight saved: {}", savedFlight);
 
-        eventProducer.sendFlightEvent(
-                FlightEvent.builder()
-                        .eventType("CREATED")
-                        .flight(savedFlight)
-                        .timestamp(Instant.now())
-                        .build()
-        );
-        return dtoMapper.toFlightDTO(savedFlight);
+        flightEventPublisher.publishFlightCreated(savedFlight);
+
+        return flightMapper.toResponse(savedFlight);
     }
 
     @Override
-    public List<FlightDTO> getAllFlights(int page, int size) {
+    public List<FlightResponse> getAllFlights(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Flight> flights = flightRepo.findAll(pageable);
-        return dtoMapper.toFlightDTOs(flights.getContent());
+        Page<Flight> flights = flightRepository.findAll(pageable);
+        return flightMapper.toResponseList(flights.getContent());
     }
 
     @Override
-    public FlightDTO getFlightById(ObjectId id) {
-        return dtoMapper.toFlightDTO(findFlightOrThrow(id));
+    public FlightResponse getFlightById(ObjectId id) {
+        return flightMapper.toResponse(findFlightOrThrow(id));
     }
 
     @Override
-    public FlightDTO updateFlight(ObjectId id, Flight incoming) {
-        findFlightOrThrow(id);
-        incoming.setId(id);
-        Flight savedFlight = flightRepo.save(incoming);
-        eventProducer.sendFlightEvent(
-                FlightEvent.builder()
-                        .eventType("UPDATED")
-                        .flight(savedFlight)
-                        .timestamp(Instant.now())
-                        .build()
-        );
-        return dtoMapper.toFlightDTO(savedFlight);
+    public FlightResponse updateFlight(ObjectId id, FlightRequest incoming) {
+        Flight existing = findFlightOrThrow(id);
+        flightMapper.updateEntityFromRequest(incoming, existing);
+        Flight savedFlight = flightRepository.save(existing);
+
+        flightEventPublisher.publishFlightUpdated(savedFlight);
+
+        return flightMapper.toResponse(savedFlight);
     }
 
     @Override
     public void deleteFlight(ObjectId id) {
         Flight existing = findFlightOrThrow(id);
-        flightRepo.deleteById(id);
-        eventProducer.sendFlightEvent(
-                FlightEvent.builder()
-                        .eventType("DELETED")
-                        .flight(existing)
-                        .timestamp(Instant.now())
-                        .build()
-        );
+        flightRepository.deleteById(id);
+        flightEventPublisher.publishFlightDeleted(existing);
     }
 
     @Override
-    public List<FlightDTO> search(FlightSearchRequest request) {
+    public List<FlightResponse> search(FlightSearchRequest request) {
         Query query = flightSearchSpecification.toQuery(request);
         List<Flight> result = mongoTemplate.find(query, Flight.class);
-        return dtoMapper.toFlightDTOs(result);
+        return flightMapper.toResponseList(result);
     }
 
     private Flight findFlightOrThrow(ObjectId id) {
-        return flightRepo.findById(id).orElseThrow(() -> new FlightNotFoundException(id));
+        return flightRepository.findById(id).orElseThrow(() -> new FlightNotFoundException(id));
+    }
+
+    private void validateFlightDoesNotExist(FlightRequest request) {
+        boolean exists = flightRepository.existsByFlightNumberAndDepartureTime(
+                request.getFlightNumber(),
+                request.getDepartureTime()
+        );
+
+        if (exists) {
+            throw new FlightAlreadyExistsException(
+                    "Flight already exists with flightNumber " + request.getFlightNumber()
+                            + " at " + request.getDepartureTime()
+            );
+        }
     }
 }
