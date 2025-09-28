@@ -1,6 +1,7 @@
-package com.airport.flightscheduler.search;
+package com.airport.flightscheduler.specification;
 
-import com.airport.flightscheduler.dto.FlightSearchRequest;
+import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
+import com.airport.flightscheduler.specification.criteria.FlightSearchCriterion;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Criteria;
