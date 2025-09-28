@@ -13,7 +13,7 @@ public class FlightCreatedHandler implements FlightEventHandler{
 
     @Override
     public void handle(FlightEvent event) {
-        flightRepository.save(event.getFlight());
+        flightRepository.save(event.getFlightReference());
     }
 
     @Override
