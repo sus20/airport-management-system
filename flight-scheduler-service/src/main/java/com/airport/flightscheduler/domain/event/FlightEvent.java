@@ -1,5 +1,6 @@
-package com.airport.flightscheduler.domain;
+package com.airport.flightscheduler.domain.event;
 
+import com.airport.flightscheduler.domain.entity.Flight;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
