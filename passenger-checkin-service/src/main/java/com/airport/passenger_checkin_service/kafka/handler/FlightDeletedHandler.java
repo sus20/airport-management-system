@@ -12,7 +12,7 @@ public class FlightDeletedHandler implements FlightEventHandler{
 
     @Override
     public void handle(FlightEvent event) {
-        flightRepository.deleteById(event.getFlight().getId());
+        flightRepository.deleteById(event.getFlightReference().getId());
     }
 
     @Override
