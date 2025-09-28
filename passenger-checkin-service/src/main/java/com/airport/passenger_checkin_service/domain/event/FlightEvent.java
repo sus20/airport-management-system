@@ -1,6 +1,6 @@
 package com.airport.passenger_checkin_service.domain.event;
 
-import com.airport.passenger_checkin_service.domain.entity.Flight;
+import com.airport.passenger_checkin_service.domain.entity.FlightReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,6 @@ import java.time.Instant;
 @NoArgsConstructor
 public class FlightEvent {
     private String eventType;
-    private Flight flight;
+    private FlightReference flightReference;
     private Instant timestamp;
 }
