@@ -1,9 +1,8 @@
 package com.airport.flightscheduler.controller;
 
-import com.airport.flightscheduler.domain.Flight;
-import com.airport.flightscheduler.dto.FlightSearchRequest;
-import com.airport.flightscheduler.dto.FlightDTO;
-import com.airport.flightscheduler.enumeration.FlightStatus;
+import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
+import com.airport.flightscheduler.domain.dto.request.FlightRequest;
+import com.airport.flightscheduler.domain.dto.response.FlightResponse;
 import com.airport.flightscheduler.service.FlightService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ public class FlightController {
     private final FlightService flightService;
 
     @GetMapping
-    public ResponseEntity<List<FlightDTO>> getFlights(
+    public ResponseEntity<List<FlightResponse>> getFlights(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
@@ -32,15 +31,15 @@ public class FlightController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FlightDTO> getFlightById(@PathVariable ObjectId id) {
+    public ResponseEntity<FlightResponse> getFlightById(@PathVariable ObjectId id) {
         log.debug("Get flight by id: {}", id);
         return ResponseEntity.ok(flightService.getFlightById(id));
     }
 
     @PostMapping
-    public ResponseEntity<FlightDTO> createFlight(@Valid @RequestBody Flight flight) {
-        log.info(" POST /flights creating flight {}", flight.getFlightNumber());
-        FlightDTO savedFlight = flightService.createFlight(flight);
+    public ResponseEntity<FlightResponse> createFlight(@Valid @RequestBody FlightRequest request) {
+        log.info(" POST /flights creating flight {}", request.getFlightNumber());
+        FlightResponse savedFlight = flightService.createFlight(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{}")
@@ -50,8 +49,8 @@ public class FlightController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FlightDTO> updateFlight(@PathVariable ObjectId id, @Valid @RequestBody Flight flight) {
-        return ResponseEntity.ok(flightService.updateFlight(id, flight));
+    public ResponseEntity<FlightResponse> updateFlight(@PathVariable ObjectId id, @Valid @RequestBody FlightRequest request) {
+        return ResponseEntity.ok(flightService.updateFlight(id, request));
     }
 
     @DeleteMapping("/{id}")
@@ -61,14 +60,8 @@ public class FlightController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/status")
-    public ResponseEntity<FlightStatus> getFlightStatus(@PathVariable ObjectId id) {
-        log.debug("GET /flights/{}/status", id);
-        return ResponseEntity.ok().body(flightService.getFlightById(id).getStatus());
-    }
-
     @GetMapping("/search")
-    public ResponseEntity<List<FlightDTO>> searchFlights(@Valid @ModelAttribute FlightSearchRequest request){
+    public ResponseEntity<List<FlightResponse>> searchFlights(@Valid @ModelAttribute FlightSearchRequest request){
         return ResponseEntity.ok(flightService.search(request));
     }
 }
