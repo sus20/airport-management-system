@@ -1,32 +1,19 @@
-package com.airport.flightscheduler.domain;
+package com.airport.flightscheduler.domain.dto.request;
 
-import com.airport.flightscheduler.enumeration.FlightStatus;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(NON_DEFAULT)
-@Document(collection = "flights")
-public class Flight {
-
-    @Id
-    private ObjectId id;
-
+public class FlightRequest {
     @NotBlank(message = "Flight number is required")
+    @Pattern(regexp = "^[A-Z0-9]{2,3}[0-9]{1,4}$",
+            message = "Flight number must be like EK101 or LH789")
     private String flightNumber;
 
     @NotBlank(message = "Airline name is required")
@@ -50,14 +37,8 @@ public class Flight {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime arrivalTime;
 
-    @NotNull(message = "Status is required")
-    private FlightStatus status;
-
     @NotBlank(message = "Aircraft type is required")
     private String aircraftType;
-
-    private String gate;
-    private String terminal;
 
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be positive")
     private BigDecimal price;
