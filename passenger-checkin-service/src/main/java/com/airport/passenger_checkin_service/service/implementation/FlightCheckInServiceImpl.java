@@ -7,7 +7,7 @@ import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInReq
 import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.domain.event.CheckInEvent;
 import com.airport.passenger_checkin_service.exception.*;
-import com.airport.passenger_checkin_service.domain.entity.Flight;
+import com.airport.passenger_checkin_service.domain.entity.FlightReference;
 import com.airport.passenger_checkin_service.kafka.producer.CheckInEventPublisher;
 import com.airport.passenger_checkin_service.mapper.CheckInMapper;
 import com.airport.passenger_checkin_service.repository.CheckInRepository;
@@ -101,12 +101,12 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
     }
 
     private void validateFlight(String flightNumber) {
-        Flight flight = flightRepository.findByFlightNumber(flightNumber)
+        FlightReference flightReference = flightRepository.findByFlightNumber(flightNumber)
                 .orElseThrow(() -> new FlightNotFoundException("Flight " + flightNumber + " not found"));
 
-        if (flight.getStatus() == FlightStatus.CANCELLED
-                || flight.getStatus() == FlightStatus.ARRIVED
-                || flight.getStatus() == FlightStatus.DEPARTED) {
+        if (flightReference.getStatus() == FlightStatus.CANCELLED
+                || flightReference.getStatus() == FlightStatus.ARRIVED
+                || flightReference.getStatus() == FlightStatus.DEPARTED) {
             throw new FlightUnavailableException("Check-in not allowed for flight: " + flightNumber + "\n See the Status! ");
         }
     }
