@@ -13,7 +13,7 @@ public class FlightCancelledHandler implements FlightEventHandler {
 
     @Override
     public void handle(FlightEvent event) {
-        flightRepository.findById(event.getFlight().getId())
+        flightRepository.findById(event.getFlightReference().getId())
                 .ifPresent(flight -> {
                     flight.setStatus(FlightStatus.CANCELLED);
                     flightRepository.save(flight);
