@@ -5,10 +5,10 @@ import com.airport.passenger_checkin_service.domain.enums.CheckInStatus;
 import com.airport.passenger_checkin_service.domain.enums.FlightStatus;
 import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInRequest;
 import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
-import com.airport.passenger_checkin_service.exception.*;
 import com.airport.passenger_checkin_service.domain.event.CheckInEvent;
+import com.airport.passenger_checkin_service.exception.*;
 import com.airport.passenger_checkin_service.domain.entity.Flight;
-import com.airport.passenger_checkin_service.kafka.CheckInEventProducer;
+import com.airport.passenger_checkin_service.kafka.producer.CheckInEventPublisher;
 import com.airport.passenger_checkin_service.mapper.CheckInMapper;
 import com.airport.passenger_checkin_service.repository.CheckInRepository;
 import com.airport.passenger_checkin_service.repository.FlightRepository;
@@ -18,7 +18,6 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -27,7 +26,7 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
     private final CheckInRepository checkInRepository;
     private final CheckInMapper checkInMapper;
     private final FlightRepository flightRepository;
-    private final CheckInEventProducer eventProducer;
+    private final CheckInEventPublisher eventPublisher;
 
     @Override
     public FlightCheckInResponse createCheckIn(FlightCheckInRequest request) {
@@ -47,11 +46,11 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
 
         FlightCheckInRecord updated = checkInRepository.save(saved);
 
-        eventProducer.sendCheckInEvent(CheckInEvent.builder()
+        CheckInEvent event = CheckInEvent.builder()
                 .eventType(CheckInStatus.CHECKEDIN)
-                .timestamp(Instant.now())
-                .build()
-        );
+                .checkIn(updated)
+                .build();
+        eventPublisher.publish(event);
 
         return checkInMapper.toResponse(updated);
     }
@@ -105,9 +104,9 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
         Flight flight = flightRepository.findByFlightNumber(flightNumber)
                 .orElseThrow(() -> new FlightNotFoundException("Flight " + flightNumber + " not found"));
 
-        if(flight.getStatus() == FlightStatus.CANCELLED
-        || flight.getStatus() == FlightStatus.ARRIVED
-        || flight.getStatus() == FlightStatus.DEPARTED){
+        if (flight.getStatus() == FlightStatus.CANCELLED
+                || flight.getStatus() == FlightStatus.ARRIVED
+                || flight.getStatus() == FlightStatus.DEPARTED) {
             throw new FlightUnavailableException("Check-in not allowed for flight: " + flightNumber + "\n See the Status! ");
         }
     }
