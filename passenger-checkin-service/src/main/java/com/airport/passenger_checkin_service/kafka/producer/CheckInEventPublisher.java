@@ -16,6 +16,13 @@ public class CheckInEventPublisher {
     private final EventProducer<CheckInEvent> producer;
 
     public void publish(CheckInEvent event) {
-        producer.send(checkinsTopic, event.getCheckIn().getId().toHexString(), event);
+        String key = event.getCheckIn().getId().toHexString();
+        producer.send(checkinsTopic, key, event);
+        log.info("Published CheckInEvent topic={} key={} passengerId={} flightId={}",
+                checkinsTopic,
+                key,
+                event.getCheckIn().getId(),
+                event.getCheckIn().getFlightNumber()
+        );
     }
 }
