@@ -1,5 +1,6 @@
 package com.airport.flightscheduler.domain.entity;
 
+import com.airport.flightscheduler.domain.enums.FlightStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,5 +30,8 @@ public class Flight {
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private String aircraftType;
+    private FlightStatus status;
+    private String gate;
+    private String terminal;
     private BigDecimal price;
 }
