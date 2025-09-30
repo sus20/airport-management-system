@@ -20,10 +20,9 @@ public class GateUpdateHandler implements FlightUpdateHandler<FlightOpsRequest> 
     }
 
     @Override
-    public Flight applyUpdate(Flight flight, FlightOpsRequest request) {
+    public void applyUpdate(Flight flight, FlightOpsRequest request) {
         if (request.getGate() != null && !request.getGate().equals(flight.getGate())) {
             flight.setGate(request.getGate());
         }
-        return flight;
     }
 }
