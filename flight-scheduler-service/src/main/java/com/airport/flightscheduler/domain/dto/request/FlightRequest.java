@@ -1,5 +1,7 @@
 package com.airport.flightscheduler.domain.dto.request;
 
+import com.airport.flightscheduler.domain.dto.request.validation.ValidFlightRequest;
+import com.airport.flightscheduler.domain.enums.FlightStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@ValidFlightRequest
 public class FlightRequest {
     @NotBlank(message = "Flight number is required")
     @Pattern(regexp = "^[A-Z0-9]{2,3}[0-9]{1,4}$",
@@ -40,6 +43,16 @@ public class FlightRequest {
     @NotBlank(message = "Aircraft type is required")
     private String aircraftType;
 
+    private FlightStatus status;
+
+    @Pattern(regexp = "^[A-Z]?\\d{1,2}[A-Z]?$",
+            message = "Gate format should be like 'A12' or '12B'")
+    private String gate;
+
+    @Pattern(regexp = "^[A-Z]$|^[1-9]$", message = "Terminal must be a single letter (A-Z) or a single digit (1-9)")
+    private String terminal;
+
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be positive")
     private BigDecimal price;
+
 }
