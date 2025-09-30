@@ -1,6 +1,7 @@
 package com.airport.flightscheduler.kafka.producer;
 
 import com.airport.flightscheduler.domain.entity.Flight;
+import com.airport.flightscheduler.domain.enums.UpdateType;
 import com.airport.flightscheduler.domain.event.FlightEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +26,9 @@ public class FlightEventPublisher {
         eventProducer.send(flightsTopic,flight.getFlightNumber(), event);
     }
 
-    public void publishFlightUpdated(Flight flight) {
+    public void publishFlightUpdated(Flight flight, UpdateType updateType) {
         FlightEvent event = FlightEvent.builder()
-                .eventType("UPDATED")
+                .eventType(updateType.name())
                 .flight(flight)
                 .timestamp(Instant.now())
                 .build();
