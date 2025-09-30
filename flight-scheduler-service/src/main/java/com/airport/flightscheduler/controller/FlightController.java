@@ -1,5 +1,6 @@
 package com.airport.flightscheduler.controller;
 
+import com.airport.flightscheduler.domain.dto.request.FlightOpsRequest;
 import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
 import com.airport.flightscheduler.domain.dto.request.FlightRequest;
 import com.airport.flightscheduler.domain.dto.response.FlightResponse;
@@ -58,6 +59,13 @@ public class FlightController {
         log.info(" DELETE /flights/ {}", id);
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/ops")
+    public ResponseEntity<FlightResponse> updateOps(
+            @PathVariable ObjectId id,
+            @Valid @RequestBody FlightOpsRequest request) {
+        return ResponseEntity.ok(flightService.updateFlight(id, request));
     }
 
     @GetMapping("/search")
