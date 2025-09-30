@@ -21,54 +21,45 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleApiException(
             ApiException ex,
             HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.builder()
-                .status(ex.getStatus().value())
-                .error(ex.getClass().getSimpleName())
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
-        return ResponseEntity.status(ex.getStatus()).body(error);
+        return ResponseEntity.status(ex.getStatus()).body(
+                buildErrorResponse(ex.getStatus(), ex.getMessage(), request, null)
+        );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,
             HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(ex.getClass().getSimpleName())
-                .message("An unexpected error occurred")
-                .path(request.getRequestURI())
-                .build();
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("exception", ex.getClass().getName());
+        errorDetails.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request, errorDetails)
+        );
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFound(
-            NoResourceFoundException ex,
             HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.builder()
-                .status(HttpStatus.NOT_FOUND.value())
-                .error(ex.getClass().getSimpleName())
-                .message("Endpoint not found")
-                .path(request.getRequestURI())
-                .build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                buildErrorResponse(HttpStatus.NOT_FOUND, "Endpoint not found", request, null)
+        );
     }
-
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotAllowed(
             HttpRequestMethodNotSupportedException ex,
             HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.builder()
-                .status(HttpStatus.METHOD_NOT_ALLOWED.value())
-                .error(ex.getClass().getSimpleName())
-                .message("HTTP method not supported")
-                .path(request.getRequestURI())
-                .build();
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("method", ex.getMethod());
+        errorDetails.put("supportedMethods", ex.getSupportedHttpMethods() != null
+                ? ex.getSupportedHttpMethods().toString()
+                : "N/A");
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+                buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, "HTTP method not supported", request, errorDetails)
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -79,29 +70,33 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 validationErrors.put(error.getField(), error.getDefaultMessage()));
 
-        ErrorResponse errorDetails = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message("Validation Failed")
-                .path(request.getRequestURI())
-                .errorDetails(validationErrors)
-                .build();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation Failed", request, validationErrors)
+        );
     }
 
     @ExceptionHandler(FlightAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleFlightAlreadyExists(
             FlightAlreadyExistsException ex,
             HttpServletRequest request) {
-        ErrorResponse error = ErrorResponse.builder()
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null)
+        );
+    }
+
+    private ErrorResponse buildErrorResponse(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request,
+            Map<String, String> errorDetails) {
+        return ErrorResponse.builder()
                 .timestamp(Instant.now())
-                .status(HttpStatus.CONFLICT.value())
-                .error(HttpStatus.CONFLICT.getReasonPhrase())
-                .message(ex.getMessage())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
                 .path(request.getRequestURI())
+                .errorDetails(errorDetails != null ? errorDetails : new HashMap<>())
                 .build();
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
 }
