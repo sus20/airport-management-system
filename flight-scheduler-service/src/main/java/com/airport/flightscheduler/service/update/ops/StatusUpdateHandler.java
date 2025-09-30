@@ -19,11 +19,10 @@ public class StatusUpdateHandler implements FlightUpdateHandler<FlightOpsRequest
     }
 
     @Override
-    public Flight applyUpdate(Flight flight, FlightOpsRequest request) {
+    public void applyUpdate(Flight flight, FlightOpsRequest request) {
         if (request.getFlightStatus() != null
                 && !request.getFlightStatus().equals(flight.getStatus())) {
             flight.setStatus(request.getFlightStatus());
         }
-        return flight;
     }
 }

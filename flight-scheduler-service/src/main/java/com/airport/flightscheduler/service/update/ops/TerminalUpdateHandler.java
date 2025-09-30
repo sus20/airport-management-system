@@ -19,10 +19,9 @@ public class TerminalUpdateHandler implements FlightUpdateHandler<FlightOpsReque
     }
 
     @Override
-    public Flight applyUpdate(Flight flight, FlightOpsRequest request) {
+    public void applyUpdate(Flight flight, FlightOpsRequest request) {
         if (request.getTerminal() != null && !request.getTerminal().equals(flight.getTerminal())) {
             flight.setTerminal(request.getTerminal());
         }
-        return flight;
     }
 }
