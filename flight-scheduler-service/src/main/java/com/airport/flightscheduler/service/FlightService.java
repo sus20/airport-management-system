@@ -14,7 +14,7 @@ public interface FlightService {
 
     FlightResponse getFlightById(ObjectId id);
 
-    FlightResponse updateFlight(ObjectId id, FlightRequest request);
+    FlightResponse updateFlight(ObjectId id, Object request);
 
     void deleteFlight(ObjectId id);
 
