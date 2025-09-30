@@ -4,12 +4,14 @@ import com.airport.flightscheduler.domain.entity.Flight;
 import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
 import com.airport.flightscheduler.domain.dto.request.FlightRequest;
 import com.airport.flightscheduler.domain.dto.response.FlightResponse;
+import com.airport.flightscheduler.domain.enums.UpdateType;
 import com.airport.flightscheduler.exception.FlightAlreadyExistsException;
 import com.airport.flightscheduler.exception.FlightNotFoundException;
 import com.airport.flightscheduler.kafka.producer.FlightEventPublisher;
 import com.airport.flightscheduler.mapper.FlightMapper;
 import com.airport.flightscheduler.repository.FlightRepository;
 import com.airport.flightscheduler.service.FlightService;
+import com.airport.flightscheduler.service.update.FlightUpdateHandler;
 import com.airport.flightscheduler.specification.FlightSearchSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -33,6 +36,7 @@ public class FlightServiceImpl implements FlightService {
     private final FlightMapper flightMapper;
     private final MongoTemplate mongoTemplate;
     private final FlightEventPublisher flightEventPublisher;
+    private final List<FlightUpdateHandler<?>> handlers;
 
     @Override
     public FlightResponse createFlight(FlightRequest request) {
@@ -60,12 +64,21 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public FlightResponse updateFlight(ObjectId id, FlightRequest incoming) {
-        Flight existing = findFlightOrThrow(id);
-        flightMapper.updateEntityFromRequest(incoming, existing);
-        Flight savedFlight = flightRepository.save(existing);
+    public FlightResponse updateFlight(ObjectId id, Object request) {
+        Flight flight = findFlightOrThrow(id);
+        List<UpdateType> appliedUpdates = new ArrayList<>();
 
-        flightEventPublisher.publishFlightUpdated(savedFlight);
+        for(FlightUpdateHandler<?> handler : handlers) {
+            if(handler.getSupportedType().isInstance(request)) {
+                applyTypedUpdate(handler,flight, request);
+                appliedUpdates.add(handler.getUpdateType());
+            }
+        }
+        Flight savedFlight = flightRepository.save(flight);
+
+        for (UpdateType updateType : appliedUpdates) {
+            flightEventPublisher.publishFlightUpdated(savedFlight, updateType);
+        }
 
         return flightMapper.toResponse(savedFlight);
     }
@@ -82,6 +95,10 @@ public class FlightServiceImpl implements FlightService {
         Query query = flightSearchSpecification.toQuery(request);
         List<Flight> result = mongoTemplate.find(query, Flight.class);
         return flightMapper.toResponseList(result);
+    }
+
+    private <T> void applyTypedUpdate(FlightUpdateHandler<T> handler, Flight flight, Object request) {
+        handler.applyUpdate(flight, handler.getSupportedType().cast(request));
     }
 
     private Flight findFlightOrThrow(ObjectId id) {
