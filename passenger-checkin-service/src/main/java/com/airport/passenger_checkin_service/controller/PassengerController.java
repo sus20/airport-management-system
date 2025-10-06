@@ -5,14 +5,14 @@ import com.airport.passenger_checkin_service.domain.dto.response.PassengerRespon
 import com.airport.passenger_checkin_service.domain.dto.request.PassengerSearchRequest;
 import com.airport.passenger_checkin_service.service.PassengerService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RestController
 @RequestMapping("/passengers")
 public class PassengerController {
