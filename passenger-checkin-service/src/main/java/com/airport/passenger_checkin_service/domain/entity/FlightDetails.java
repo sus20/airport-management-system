@@ -8,22 +8,26 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "flights")
-public class FlightReference {
+public class FlightDetails {
     @Id
-    private ObjectId id;
+    private String id;
     private String flightNumber;
-    private FlightStatus status;
+    private String airline;
+    private String origin;
+    private String destination;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
+    private String aircraftType;
+    private FlightStatus status;
     private String gate;
     private String terminal;
-    private Instant lastUpdated;
+    private BigDecimal price;
 }
+
