@@ -17,7 +17,10 @@ public class FlightEventConsumer {
             groupId = "${spring.kafka.consumer.group-id}"
     )
     public void consumeFlightEvent(FlightEvent event) {
+        log.info("Dispatcher instance: {}", dispatcher);
+        System.out.println("Consuming flight event:" + event);
         log.info("Consuming flight event: {}", event);
         dispatcher.dispatch(event);
     }
+
 }
