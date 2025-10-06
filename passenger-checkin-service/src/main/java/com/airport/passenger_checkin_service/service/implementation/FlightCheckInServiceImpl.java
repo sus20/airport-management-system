@@ -7,13 +7,13 @@ import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInReq
 import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.domain.event.CheckInEvent;
 import com.airport.passenger_checkin_service.exception.*;
-import com.airport.passenger_checkin_service.domain.entity.FlightReference;
+import com.airport.passenger_checkin_service.domain.entity.FlightDetails;
 import com.airport.passenger_checkin_service.kafka.producer.CheckInEventPublisher;
 import com.airport.passenger_checkin_service.mapper.CheckInMapper;
 import com.airport.passenger_checkin_service.repository.CheckInRepository;
 import com.airport.passenger_checkin_service.repository.FlightRepository;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class FlightCheckInServiceImpl implements FlightCheckInService {
     private final CheckInRepository checkInRepository;
     private final CheckInMapper checkInMapper;
@@ -47,7 +47,7 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
         FlightCheckInRecord updated = checkInRepository.save(saved);
 
         CheckInEvent event = CheckInEvent.builder()
-                .eventType(CheckInStatus.CHECKEDIN)
+                .eventType(CheckInStatus.CHECKED_IN)
                 .checkIn(updated)
                 .build();
         eventPublisher.publish(event);
@@ -90,8 +90,6 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
             throw new InvalidBaggageCountException("Baggage count cannot be negative");
         }
 
-        checkIn.setBaggageCount(baggageCount);
-        checkIn.setBaggageChecked(baggageCount > 0);
         return checkInMapper.toResponse(checkInRepository.save(checkIn));
     }
 
@@ -101,7 +99,7 @@ public class FlightCheckInServiceImpl implements FlightCheckInService {
     }
 
     private void validateFlight(String flightNumber) {
-        FlightReference flightReference = flightRepository.findByFlightNumber(flightNumber)
+        FlightDetails flightReference = flightRepository.findByFlightNumber(flightNumber)
                 .orElseThrow(() -> new FlightNotFoundException("Flight " + flightNumber + " not found"));
 
         if (flightReference.getStatus() == FlightStatus.CANCELLED
