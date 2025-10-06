@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "flight-checkins")
@@ -33,14 +33,10 @@ public class FlightCheckInRecord {
     private String flightNumber;
     private String passportNumber;
     private Set<String> seatNumbers;
-    private boolean baggageChecked;
-    private int baggageCount;
-    private String boardingPassUrl;
-    private CheckInStatus status = CheckInStatus.CHECKEDIN;
 
     @CreatedDate
     private Instant checkInTime;
-
-    @LastModifiedDate
-    private Instant updatedAt;
+    private String boardingPassUrl;
+    private CheckInStatus status;
+    private List<ObjectId> baggageIds;
 }
