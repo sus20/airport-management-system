@@ -16,10 +16,12 @@ public class FlightEventDispatcher {
 
     public void dispatch(FlightEvent event) {
         handlers.stream()
-                .filter(h -> h.getType().equalsIgnoreCase(event.getEventType()))
+                .filter(h -> h.getEventType().equalsIgnoreCase(event.getEventType()))
+                .filter(h -> h.getUpdateType() == null || h.getUpdateType() == event.getUpdateType())
                 .findFirst()
-                .ifPresentOrElse(handler -> handler.handle(event),
-                        () -> log.warn("No handler for event type {}", event.getEventType())
+                .ifPresentOrElse(
+                        h -> h.handle(event),
+                        () -> log.warn("No handler for eventType={} updateType={}", event.getEventType(), event.getUpdateType())
                 );
     }
 
