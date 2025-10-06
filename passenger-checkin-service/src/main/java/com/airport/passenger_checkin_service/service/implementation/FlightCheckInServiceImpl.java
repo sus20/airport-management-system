@@ -11,7 +11,7 @@ import com.airport.passenger_checkin_service.domain.entity.FlightDetails;
 import com.airport.passenger_checkin_service.kafka.producer.CheckInEventPublisher;
 import com.airport.passenger_checkin_service.mapper.CheckInMapper;
 import com.airport.passenger_checkin_service.repository.CheckInRepository;
-import com.airport.passenger_checkin_service.repository.FlightRepository;
+import com.airport.passenger_checkin_service.repository.FlightDetailsRepository;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
@@ -25,7 +25,7 @@ import java.util.List;
 public class FlightCheckInServiceImpl implements FlightCheckInService {
     private final CheckInRepository checkInRepository;
     private final CheckInMapper checkInMapper;
-    private final FlightRepository flightRepository;
+    private final FlightDetailsRepository flightRepository;
     private final CheckInEventPublisher eventPublisher;
 
     @Override

@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface FlightRepository extends MongoRepository<FlightDetails, ObjectId> {
+public interface FlightDetailsRepository extends MongoRepository<FlightDetails, ObjectId> {
     Optional<FlightDetails> findByFlightNumber(String flightNumber);
 }
