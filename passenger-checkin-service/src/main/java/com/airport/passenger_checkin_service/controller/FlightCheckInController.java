@@ -4,7 +4,7 @@ import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInReq
 import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/checkins")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class FlightCheckInController {
 
     private final FlightCheckInService checkInService;
