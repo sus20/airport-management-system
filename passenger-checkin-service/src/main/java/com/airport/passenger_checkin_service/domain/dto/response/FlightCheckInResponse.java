@@ -1,8 +1,10 @@
 package com.airport.passenger_checkin_service.domain.dto.response;
 
+import com.airport.passenger_checkin_service.domain.enums.CheckInStatus;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -10,9 +12,8 @@ public class FlightCheckInResponse {
     private String id;
     private String flightNumber;
     private Set<String> seatNumbers;
-    private boolean baggageChecked;
-    private int baggageCount;
-    private String boardingPassUrl;
     private Instant checkInTime;
-    private Instant updatedAt;
+    private String boardingPassUrl;
+    private CheckInStatus checkInStatus;
+    private List<BaggageResponse> baggages;
 }
