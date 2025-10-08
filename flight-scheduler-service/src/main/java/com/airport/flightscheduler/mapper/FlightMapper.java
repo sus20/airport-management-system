@@ -4,6 +4,7 @@ import com.airport.flightscheduler.domain.entity.Flight;
 
 import com.airport.flightscheduler.domain.dto.request.FlightRequest;
 import com.airport.flightscheduler.domain.dto.response.FlightResponse;
+import com.airport.flightscheduler.domain.event.FlightPayload;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,8 +18,11 @@ public interface FlightMapper {
     @Mapping(target = "id", expression = "java(flight.getId() != null ? flight.getId().toHexString() : null)")
     FlightResponse toResponse(Flight flight);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", expression = "java(flight.getId() != null ? flight.getId().toHexString() : null)")
+    FlightPayload toFlightPayload(Flight flight);
 
+
+    @Mapping(target = "id", ignore = true)
     void updateEntityFromRequest(FlightRequest request, @MappingTarget Flight flight);
 
     List<FlightResponse> toResponseList(List<Flight> flights);

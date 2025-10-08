@@ -1,8 +1,8 @@
 package com.airport.flightscheduler.kafka.producer;
 
-import com.airport.flightscheduler.domain.entity.Flight;
 import com.airport.flightscheduler.domain.enums.UpdateType;
 import com.airport.flightscheduler.domain.event.FlightEvent;
+import com.airport.flightscheduler.domain.event.FlightPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,33 +17,33 @@ public class FlightEventPublisher {
 
     private final EventProducer<FlightEvent> eventProducer;
 
-    public  void publishFlightCreated(Flight flight){
+    public  void publishFlightCreated(FlightPayload flightPayload){
         FlightEvent event = FlightEvent.builder()
                 .eventType("CREATED")
-                .flight(flight)
+                .flightPayload(flightPayload)
                 .timestamp(Instant.now())
                 .build();
-        eventProducer.send(flightsTopic,flight.getFlightNumber(), event);
+        eventProducer.send(flightsTopic,flightPayload.getFlightNumber(), event);
     }
 
-    public void publishFlightUpdated(Flight flight, UpdateType updateType) {
+    public void publishFlightUpdated(FlightPayload flightPayload, UpdateType updateType) {
         FlightEvent event = FlightEvent.builder()
                 .eventType(updateType.name())
-                .flight(flight)
+                .flightPayload(flightPayload)
                 .timestamp(Instant.now())
                 .build();
 
-        eventProducer.send(flightsTopic, flight.getFlightNumber(), event);
+        eventProducer.send(flightsTopic, flightPayload.getFlightNumber(), event);
     }
 
-    public void publishFlightDeleted(Flight flight) {
+    public void publishFlightDeleted(FlightPayload flightPayload) {
         FlightEvent event = FlightEvent.builder()
                 .eventType("DELETED")
-                .flight(flight)
+                .flightPayload(flightPayload)
                 .timestamp(Instant.now())
                 .build();
 
-        eventProducer.send(flightsTopic, flight.getFlightNumber(), event);
+        eventProducer.send(flightsTopic, flightPayload.getFlightNumber(), event);
     }
 
 }

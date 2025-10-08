@@ -1,6 +1,5 @@
 package com.airport.flightscheduler.domain.event;
 
-import com.airport.flightscheduler.domain.entity.Flight;
 import com.airport.flightscheduler.domain.enums.UpdateType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,7 @@ import java.time.Instant;
 @Builder
 public class FlightEvent {
     private String eventType;
-    private Flight flight;
+    private FlightPayload flightPayload;
     private UpdateType updateType;
     private Instant timestamp;
 }

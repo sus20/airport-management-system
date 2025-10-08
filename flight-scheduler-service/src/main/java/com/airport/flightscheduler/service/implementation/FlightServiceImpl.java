@@ -46,7 +46,7 @@ public class FlightServiceImpl implements FlightService {
         Flight savedFlight = flightRepository.save(flight);
         log.info("Flight saved: {}", savedFlight);
 
-        flightEventPublisher.publishFlightCreated(savedFlight);
+        flightEventPublisher.publishFlightCreated(flightMapper.toFlightPayload(savedFlight));
 
         return flightMapper.toResponse(savedFlight);
     }
@@ -68,16 +68,16 @@ public class FlightServiceImpl implements FlightService {
         Flight flight = findFlightOrThrow(id);
         List<UpdateType> appliedUpdates = new ArrayList<>();
 
-        for(FlightUpdateHandler<?> handler : handlers) {
-            if(handler.getSupportedType().isInstance(request)) {
-                applyTypedUpdate(handler,flight, request);
+        for (FlightUpdateHandler<?> handler : handlers) {
+            if (handler.getSupportedType().isInstance(request)) {
+                applyTypedUpdate(handler, flight, request);
                 appliedUpdates.add(handler.getUpdateType());
             }
         }
         Flight savedFlight = flightRepository.save(flight);
 
         for (UpdateType updateType : appliedUpdates) {
-            flightEventPublisher.publishFlightUpdated(savedFlight, updateType);
+            flightEventPublisher.publishFlightUpdated(flightMapper.toFlightPayload(savedFlight), updateType);
         }
 
         return flightMapper.toResponse(savedFlight);
@@ -87,7 +87,7 @@ public class FlightServiceImpl implements FlightService {
     public void deleteFlight(ObjectId id) {
         Flight existing = findFlightOrThrow(id);
         flightRepository.deleteById(id);
-        flightEventPublisher.publishFlightDeleted(existing);
+        flightEventPublisher.publishFlightDeleted(flightMapper.toFlightPayload(existing));
     }
 
     @Override
