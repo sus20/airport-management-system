@@ -1,6 +1,7 @@
 package com.airport.flightscheduler.kafka.producer;
 
-import com.airport.flightscheduler.domain.enums.UpdateType;
+import com.airport.flightscheduler.domain.entity.Flight;
+import com.airport.flightscheduler.domain.enums.FlightEventType;
 import com.airport.flightscheduler.domain.event.FlightEvent;
 import com.airport.flightscheduler.domain.event.FlightPayload;
 import lombok.RequiredArgsConstructor;
@@ -17,32 +18,12 @@ public class FlightEventPublisher {
 
     private final EventProducer<FlightEvent> eventProducer;
 
-    public  void publishFlightCreated(FlightPayload flightPayload){
+    public void publish(FlightPayload flightPayload, FlightEventType eventType) {
         FlightEvent event = FlightEvent.builder()
-                .eventType("CREATED")
+                .eventType(eventType)
                 .flightPayload(flightPayload)
                 .timestamp(Instant.now())
                 .build();
-        eventProducer.send(flightsTopic,flightPayload.getFlightNumber(), event);
-    }
-
-    public void publishFlightUpdated(FlightPayload flightPayload, UpdateType updateType) {
-        FlightEvent event = FlightEvent.builder()
-                .eventType(updateType.name())
-                .flightPayload(flightPayload)
-                .timestamp(Instant.now())
-                .build();
-
-        eventProducer.send(flightsTopic, flightPayload.getFlightNumber(), event);
-    }
-
-    public void publishFlightDeleted(FlightPayload flightPayload) {
-        FlightEvent event = FlightEvent.builder()
-                .eventType("DELETED")
-                .flightPayload(flightPayload)
-                .timestamp(Instant.now())
-                .build();
-
         eventProducer.send(flightsTopic, flightPayload.getFlightNumber(), event);
     }
 
