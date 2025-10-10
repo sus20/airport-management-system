@@ -1,10 +1,9 @@
 package com.airport.flightscheduler.domain.enums;
 
-public enum UpdateType {
-    // Core flight changes
-    CORE_UPDATED,
-
-    // Operational changes
+public enum FlightEventType {
+    CREATED,
+    UPDATED,
+    DELETED,
     GATE_UPDATED,
     TERMINAL_UPDATED,
     STATUS_UPDATED
