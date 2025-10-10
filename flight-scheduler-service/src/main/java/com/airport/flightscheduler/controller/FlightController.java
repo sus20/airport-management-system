@@ -1,8 +1,6 @@
 package com.airport.flightscheduler.controller;
 
-import com.airport.flightscheduler.domain.dto.request.FlightOpsRequest;
-import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
-import com.airport.flightscheduler.domain.dto.request.FlightRequest;
+import com.airport.flightscheduler.domain.dto.request.*;
 import com.airport.flightscheduler.domain.dto.response.FlightResponse;
 import com.airport.flightscheduler.service.FlightService;
 import jakarta.validation.Valid;
@@ -61,15 +59,29 @@ public class FlightController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/ops")
-    public ResponseEntity<FlightResponse> updateOps(
+    @PatchMapping("/{id}/gate")
+    public ResponseEntity<FlightResponse> updateGate(
             @PathVariable ObjectId id,
-            @Valid @RequestBody FlightOpsRequest request) {
-        return ResponseEntity.ok(flightService.updateFlight(id, request));
+            @Valid @RequestBody FlightUpdateGateRequest request) {
+        return ResponseEntity.ok(flightService.updateGate(id, request.getGate()));
+    }
+
+    @PatchMapping("/{id}/terminal")
+    public ResponseEntity<FlightResponse> updateTerminal(
+            @PathVariable ObjectId id,
+            @Valid @RequestBody FlightTerminalUpdateRequest request) {
+        return ResponseEntity.ok(flightService.updateTerminal(id, request.getTerminal()));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<FlightResponse> updateStatus(
+            @PathVariable ObjectId id,
+            @Valid @RequestBody FlightStatusUpdateRequest request) {
+        return ResponseEntity.ok(flightService.updateStatus(id, request.getStatus()));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<FlightResponse>> searchFlights(@Valid @ModelAttribute FlightSearchRequest request){
+    public ResponseEntity<List<FlightResponse>> searchFlights(@Valid @ModelAttribute FlightSearchRequest request) {
         return ResponseEntity.ok(flightService.search(request));
     }
 }
