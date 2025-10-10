@@ -1,6 +1,5 @@
 package com.airport.flightscheduler.kafka.producer;
 
-import com.airport.flightscheduler.domain.entity.Flight;
 import com.airport.flightscheduler.domain.enums.FlightEventType;
 import com.airport.flightscheduler.domain.event.FlightEvent;
 import com.airport.flightscheduler.domain.event.FlightPayload;
