@@ -4,14 +4,14 @@ import com.airport.flightscheduler.domain.entity.Flight;
 import com.airport.flightscheduler.domain.dto.request.FlightSearchRequest;
 import com.airport.flightscheduler.domain.dto.request.FlightRequest;
 import com.airport.flightscheduler.domain.dto.response.FlightResponse;
-import com.airport.flightscheduler.domain.enums.UpdateType;
+import com.airport.flightscheduler.domain.enums.FlightEventType;
+import com.airport.flightscheduler.domain.enums.FlightStatus;
 import com.airport.flightscheduler.exception.FlightAlreadyExistsException;
 import com.airport.flightscheduler.exception.FlightNotFoundException;
 import com.airport.flightscheduler.kafka.producer.FlightEventPublisher;
 import com.airport.flightscheduler.mapper.FlightMapper;
 import com.airport.flightscheduler.repository.FlightRepository;
 import com.airport.flightscheduler.service.FlightService;
-import com.airport.flightscheduler.service.update.FlightUpdateHandler;
 import com.airport.flightscheduler.specification.FlightSearchSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -36,18 +36,11 @@ public class FlightServiceImpl implements FlightService {
     private final FlightMapper flightMapper;
     private final MongoTemplate mongoTemplate;
     private final FlightEventPublisher flightEventPublisher;
-    private final List<FlightUpdateHandler<?>> handlers;
 
     @Override
     public FlightResponse createFlight(FlightRequest request) {
         validateFlightDoesNotExist(request);
-
-        Flight flight = flightMapper.toEntity(request);
-        Flight savedFlight = flightRepository.save(flight);
-        log.info("Flight saved: {}", savedFlight);
-
-        flightEventPublisher.publishFlightCreated(flightMapper.toFlightPayload(savedFlight));
-
+        Flight savedFlight = saveAndPublish(flightMapper.toEntity(request),FlightEventType.CREATED);
         return flightMapper.toResponse(savedFlight);
     }
 
@@ -64,22 +57,55 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public FlightResponse updateFlight(ObjectId id, Object request) {
+    public FlightResponse updateFlight(ObjectId id, FlightRequest request) {
+        Flight existing = findFlightOrThrow(id);
+
+        Flight updatedCandidate = flightMapper.toEntity(request);
+        updatedCandidate.setId(existing.getId());
+
+        if (existing.equals(updatedCandidate)) {
+            return flightMapper.toResponse(existing);
+        }
+
+        flightMapper.updateEntityFromRequest(request, existing);
+
+        Flight saved = saveAndPublish(existing, FlightEventType.UPDATED);
+        return flightMapper.toResponse(saved);
+    }
+
+    @Override
+    public FlightResponse updateGate(ObjectId id, String gate) {
         Flight flight = findFlightOrThrow(id);
-        List<UpdateType> appliedUpdates = new ArrayList<>();
-
-        for (FlightUpdateHandler<?> handler : handlers) {
-            if (handler.getSupportedType().isInstance(request)) {
-                applyTypedUpdate(handler, flight, request);
-                appliedUpdates.add(handler.getUpdateType());
-            }
+        if(Objects.equals(flight.getGate(),gate)){
+            log.info("Gate is unchanged for flight{}: {}", id, gate);
+            return flightMapper.toResponse(flight);
         }
-        Flight savedFlight = flightRepository.save(flight);
+        flight.setGate(gate);
+        Flight savedFlight = saveAndPublish(flight, FlightEventType.GATE_UPDATED);
+        return flightMapper.toResponse(savedFlight);
+    }
 
-        for (UpdateType updateType : appliedUpdates) {
-            flightEventPublisher.publishFlightUpdated(flightMapper.toFlightPayload(savedFlight), updateType);
+    @Override
+    public FlightResponse updateTerminal(ObjectId id, String terminal) {
+        Flight flight = findFlightOrThrow(id);
+        if (Objects.equals(flight.getTerminal(), terminal)) {
+            log.info("Terminal is unchanged for flight{}: {}", id, terminal);
+            return flightMapper.toResponse(flight);
         }
+        flight.setTerminal(terminal);
+        Flight savedFlight = saveAndPublish(flight, FlightEventType.TERMINAL_UPDATED);
+        return flightMapper.toResponse(savedFlight);
+    }
 
+    @Override
+    public FlightResponse updateStatus(ObjectId id, FlightStatus status) {
+        Flight flight = findFlightOrThrow(id);
+        if (flight.getStatus() == status) {
+            log.info("Status is unchanged for flight{}: {}", id, status);
+            return flightMapper.toResponse(flight);
+        }
+        flight.setStatus(status);
+        Flight savedFlight = saveAndPublish(flight, FlightEventType.STATUS_UPDATED);
         return flightMapper.toResponse(savedFlight);
     }
 
@@ -87,7 +113,7 @@ public class FlightServiceImpl implements FlightService {
     public void deleteFlight(ObjectId id) {
         Flight existing = findFlightOrThrow(id);
         flightRepository.deleteById(id);
-        flightEventPublisher.publishFlightDeleted(flightMapper.toFlightPayload(existing));
+        flightEventPublisher.publish(flightMapper.toFlightPayload(existing),FlightEventType.DELETED);
     }
 
     @Override
@@ -95,10 +121,6 @@ public class FlightServiceImpl implements FlightService {
         Query query = flightSearchSpecification.toQuery(request);
         List<Flight> result = mongoTemplate.find(query, Flight.class);
         return flightMapper.toResponseList(result);
-    }
-
-    private <T> void applyTypedUpdate(FlightUpdateHandler<T> handler, Flight flight, Object request) {
-        handler.applyUpdate(flight, handler.getSupportedType().cast(request));
     }
 
     private Flight findFlightOrThrow(ObjectId id) {
@@ -117,5 +139,12 @@ public class FlightServiceImpl implements FlightService {
                             + " at " + request.getDepartureTime()
             );
         }
+    }
+
+    private Flight saveAndPublish(Flight flight, FlightEventType eventType) {
+        Flight savedFlight = flightRepository.save(flight);
+        log.info("Flight saved: {}", savedFlight);
+        flightEventPublisher.publish(flightMapper.toFlightPayload(savedFlight), eventType);
+        return savedFlight;
     }
 }
