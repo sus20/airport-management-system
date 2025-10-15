@@ -25,5 +25,4 @@ public class FlightEventPublisher {
                 .build();
         eventProducer.send(flightsTopic, flightPayload.getFlightNumber(), event);
     }
-
 }
