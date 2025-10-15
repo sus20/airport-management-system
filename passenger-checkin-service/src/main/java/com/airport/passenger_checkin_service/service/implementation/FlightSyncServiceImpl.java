@@ -26,6 +26,10 @@ public class FlightSyncServiceImpl implements FlightSyncService {
         switch (eventType) {
             case CREATED -> handleCreate(payload);
             case UPDATED -> handleUpdate(payload);
+            case DELETED -> handleDelete(payload);
+            case GATE_UPDATED -> handleGateUpdate(payload);
+            case TERMINAL_UPDATED -> handleTerminalUpdate(payload);
+            case STATUS_UPDATED -> handleStatusUpdate(payload);
             default -> log.warn("Unhandled event type: {}", eventType);
         }
     }
@@ -48,6 +52,42 @@ public class FlightSyncServiceImpl implements FlightSyncService {
                     flightRepository.save(existingFlight);
                     log.info("Flight updated: {}", payload.getFlightNumber());
 
-        }, () -> log.warn("Flight not found for update:{}", payload.getFlightNumber()));
+                }, () -> log.warn("Flight not found for update:{}", payload.getFlightNumber()));
+    }
+
+    private void handleDelete(FlightPayload payload) {
+        flightRepository.findByFlightNumber(payload.getFlightNumber())
+                .ifPresentOrElse(flight -> {
+                    flightRepository.delete(flight);
+                    log.info("Flight deleted: {}", payload.getFlightNumber());
+                }, () -> log.warn("Flight not found for deletion: {}", payload.getFlightNumber()));
+    }
+
+    private void handleGateUpdate(FlightPayload payload) {
+        flightRepository.findByFlightNumber(payload.getFlightNumber())
+                .ifPresentOrElse(flight -> {
+                    flight.setGate(payload.getGate());
+                    flightRepository.save(flight);
+                    log.info("Gate Updated for flight: {}", payload.getFlightNumber());
+                }, () -> log.warn("Flight not found for gate update: {}", payload.getFlightNumber()));
+    }
+
+    private void handleTerminalUpdate(FlightPayload payload) {
+        flightRepository.findByFlightNumber(payload.getFlightNumber())
+                .ifPresentOrElse(flight -> {
+                    flight.setTerminal(payload.getTerminal());
+                    flightRepository.save(flight);
+                    log.info("Terminal Updated for flight: {}", payload.getFlightNumber());
+                }, () -> log.warn("Flight not found for terminal update: {}", payload.getFlightNumber()));
+
+    }
+
+    private void handleStatusUpdate(FlightPayload payload) {
+        flightRepository.findByFlightNumber(payload.getFlightNumber())
+                .ifPresentOrElse(flight -> {
+                    flight.setStatus(payload.getStatus());
+                    flightRepository.save(flight);
+                    log.info("Status Updated for flight: {}", payload.getFlightNumber());
+                }, () -> log.warn("Flight not found for Status update: {}", payload.getFlightNumber()));
     }
 }
