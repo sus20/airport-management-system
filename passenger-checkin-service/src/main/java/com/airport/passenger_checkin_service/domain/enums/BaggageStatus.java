@@ -1,7 +1,7 @@
 package com.airport.passenger_checkin_service.domain.enums;
 
 public enum BaggageStatus {
-    CHECKED,     // passenger handed over
+    CHECKED_IN,     // passenger handed over
     SCREENED,    // security check
     LOADED,      // on aircraft
     IN_TRANSIT,  // between airports
