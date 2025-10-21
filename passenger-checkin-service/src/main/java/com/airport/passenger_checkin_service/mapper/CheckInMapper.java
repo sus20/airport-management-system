@@ -6,8 +6,6 @@ import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInRe
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface CheckInMapper {
 
@@ -15,7 +13,5 @@ public interface CheckInMapper {
 
     @Mapping(target = "id", expression = "java(checkIn.getId() != null ? checkIn.getId().toHexString() : null)")
     FlightCheckInResponse toResponse(FlightCheckInRecord checkIn);
-
-    List<FlightCheckInResponse> toResponses(List<FlightCheckInRecord> entities);
 
 }
