@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface PassengerRepository extends MongoRepository<Passenger, ObjectId> {
     Optional<Passenger> findByPassportNumberAndPassportCountry(String passportNumber, String passportCountry);
+    Optional<Passenger> findByPassportNumber(String passportNumber);
 }
