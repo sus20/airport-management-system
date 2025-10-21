@@ -1,6 +1,7 @@
 package com.airport.passenger_checkin_service.controller;
 
 import com.airport.passenger_checkin_service.domain.dto.request.FlightCheckInRequest;
+import com.airport.passenger_checkin_service.domain.dto.request.UpdateSeatRequest;
 import com.airport.passenger_checkin_service.domain.dto.response.FlightCheckInResponse;
 import com.airport.passenger_checkin_service.service.FlightCheckInService;
 import jakarta.validation.Valid;
@@ -35,18 +36,13 @@ public class FlightCheckInController {
         return ResponseEntity.ok(checkInService.getCheckInsByFlightNumber(flightNumber));
     }
 
-    @PutMapping("/{checkInId}/seats")
-    public ResponseEntity<FlightCheckInResponse> updateSeatAssignment(
+    @PatchMapping("/{checkInId}/seats")
+    public ResponseEntity<FlightCheckInResponse> updateSeatNumbers(
             @PathVariable ObjectId checkInId,
-            @RequestParam String seatNumber) {
-        return ResponseEntity.ok(checkInService.updateSeatAssignment(checkInId, seatNumber));
-    }
+            @RequestBody @Valid UpdateSeatRequest request) {
 
-    @PutMapping("/{checkInId}/baggage")
-    public ResponseEntity<FlightCheckInResponse> updateBaggageInfo(
-            @PathVariable ObjectId checkInId,
-            @RequestParam int baggageCount) {
-        return ResponseEntity.ok(checkInService.updateBaggageInfo(checkInId, baggageCount));
+        FlightCheckInResponse updated = checkInService.updateSeatNumbers(checkInId, request);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{checkInId}")
