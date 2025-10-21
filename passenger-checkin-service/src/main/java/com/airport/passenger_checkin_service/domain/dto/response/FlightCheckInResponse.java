@@ -14,6 +14,6 @@ public class FlightCheckInResponse {
     private Set<String> seatNumbers;
     private Instant checkInTime;
     private String boardingPassUrl;
-    private CheckInStatus checkInStatus;
-    private List<BaggageResponse> baggages;
+    private CheckInStatus status;
+    private List< BaggageResponse> baggages;
 }
