@@ -1,5 +1,6 @@
 package com.airport.passenger_checkin_service.domain.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -24,5 +25,5 @@ public class FlightCheckInRequest {
                     message = "Seat must be in format like 12A, 1B, 24F"
             ) String> seatNumbers;
 
-    private List<BaggageRequest> baggages;
+    private List< @Valid BaggageRequest> baggages;
 }
