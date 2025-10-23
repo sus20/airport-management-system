@@ -1,0 +1,29 @@
+name: Build and Push Passenger Check-in Service
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Docker tag for the image"
+        required: true
+        default: "latest"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Passenger Check-in image
+        run: |
+          docker build --no-cache -f passenger-checkin-service/docker/Dockerfile -t sussap/passenger-checkin-service:${{ github.event.inputs.tag }} passenger-checkin-service
+
+      - name: Push Passenger Check-in image
+        run: |
+          docker push sussap/passenger-checkin-service:${{ github.event.inputs.tag }}
