@@ -81,7 +81,6 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo-db:27017/flights?authSource=admin
-      SPRING_MVC_TRAILING_SLASH_MATCHING: "true"
     depends_on:
       - kafka
       - mongo-db
@@ -96,7 +95,6 @@ services:
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATA_MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo-db:27017/passengers?authSource=admin
-      SPRING_MVC_TRAILING_SLASH_MATCH: "true"
     depends_on:
       - kafka
       - mongo-db
