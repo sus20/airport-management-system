@@ -1,0 +1,106 @@
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+.error {
+    color: #d32f2f;
+    background-color: #ffebee;
+    border: 1px solid #d32f2f;
+    border-radius: 5px;
+}
+
+.flight-details {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.back-button {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background-color: #f5f5f5;
+}
+
+.flight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.status {
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.status.scheduled {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.delayed {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status.departed {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status.arrived {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.cancelled {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.flight-info {
+    display: grid;
+    gap: 30px;
+}
+
+.info-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-section h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.info-section p {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-section input {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 80px;
+}
