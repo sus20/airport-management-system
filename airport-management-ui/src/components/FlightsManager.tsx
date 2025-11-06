@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useNavigate, useParams, useLocation} from 'react-router-dom';
 import flightService, {type ApiErrorResponse} from '../services/flightService';
 import FlightForm from './FlightForm';
 import FlightDetails from './FlightDetails';
@@ -6,24 +7,29 @@ import FlightSearch from './FlightSearch';
 import type {Flight, FlightRequest, FlightSearchRequest, PaginationParams} from '../types/flight';
 import './FlightsManager.css';
 
-
 const FlightsManager: React.FC = () => {
     const [flights, setFlights] = useState<Flight[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [pagination, setPagination] = useState<PaginationParams>({page: 0, size: 5});
-    const [showForm, setShowForm] = useState(false);
-    const [selectedFlight, setSelectedFlight] = useState<string | null>(null);
     const [isSearching, setIsSearching] = useState(false);
     const [formError, setFormError] = useState<ApiErrorResponse | null>(null);
     const [formLoading, setFormLoading] = useState(false);
-    const [editingFlight, setEditingFlight] = useState<Flight | null>(null);
+
+    const navigate = useNavigate();
+    const params = useParams();
+    const location = useLocation();
+
+    const isViewingDetails = params.flightId && location.pathname === `/flights/${params.flightId}`;
+    const isCreating = location.pathname === '/flights/create';
+    const isEditing = params.flightId && location.pathname === `/flights/${params.flightId}/edit`;
 
     useEffect(() => {
-        if (!isSearching) {
+        // Only load flights when we're on the main list view
+        if (!isSearching && !isViewingDetails && !isCreating && !isEditing) {
             loadFlights();
         }
-    }, [pagination.page, pagination.size, isSearching]);
+    }, [pagination.page, pagination.size, isSearching, isViewingDetails, isCreating, isEditing]);
 
     const loadFlights = async () => {
         try {
@@ -57,6 +63,7 @@ const FlightsManager: React.FC = () => {
     const handleClearSearch = () => {
         setIsSearching(false);
         setPagination(prev => ({...prev, page: 0}));
+        loadFlights();
     };
 
     const handleCreateFlight = async (flightData: FlightRequest) => {
@@ -65,42 +72,34 @@ const FlightsManager: React.FC = () => {
             setFormError(null);
 
             await flightService.createFlight(flightData);
-            setShowForm(false);
             setFormError(null);
+            navigate('/flights');
             loadFlights(); // Refresh the list
         } catch (err) {
             const apiError = err as ApiErrorResponse;
             setFormError(apiError);
 
-            // If it's not a validation error, show it as general error
             if (!apiError.errors || apiError.errors.length === 0) {
                 setError(`Failed to create flight: ${apiError.message}`);
             }
 
-            // Re-throw the error to let the form handle it
             throw err;
         } finally {
             setFormLoading(false);
         }
     };
 
-    const handleEditFlight = (flight: Flight) => {
-        setEditingFlight(flight);
-        setShowForm(true);
-    };
-
     const handleUpdateFlight = async (flightData: FlightRequest) => {
-        if (!editingFlight) return;
+        if (!params.flightId) return;
 
         try {
             setFormLoading(true);
             setFormError(null);
 
-            await flightService.updateFlight(editingFlight.id, flightData);
-            setShowForm(false);
-            setEditingFlight(null);
+            await flightService.updateFlight(params.flightId, flightData);
             setFormError(null);
-            loadFlights(); // Refresh the list
+            navigate('/flights');
+            loadFlights();
         } catch (err) {
             const apiError = err as ApiErrorResponse;
             setFormError(apiError);
@@ -131,6 +130,22 @@ const FlightsManager: React.FC = () => {
         setFlights(prev => prev.map(f => f.id === updatedFlight.id ? updatedFlight : f));
     };
 
+    const handleViewFlight = (flightId: string) => {
+        navigate(`/flights/${flightId}`);
+    };
+
+    const handleCreateFlightNavigate = () => {
+        navigate('/flights/create');
+    };
+
+    const handleEditFlight = (flight: Flight) => {
+        navigate(`/flights/${flight.id}/edit`);
+    };
+
+    const handleBackToList = () => {
+        navigate('/flights');
+    };
+
     const handlePrevious = () => {
         if (pagination.page > 0) {
             setPagination(prev => ({...prev, page: prev.page - 1}));
@@ -142,41 +157,35 @@ const FlightsManager: React.FC = () => {
     };
 
     useEffect(() => {
-        if (showForm) {
+        if (isCreating || isEditing) {
             setFormError(null);
         }
-    }, [showForm]);
+    }, [isCreating, isEditing]);
 
-    if (selectedFlight) {
+    if (isViewingDetails && params.flightId) {
         return (
             <FlightDetails
-                flightId={selectedFlight}
-                onBack={() => setSelectedFlight(null)}
+                flightId={params.flightId}
+                onBack={handleBackToList}
                 onFlightUpdate={handleFlightUpdate}
             />
         );
     }
 
-    if (showForm) {
+    if (isCreating || isEditing) {
+        // Find the flight being edited
+        const editingFlight = isEditing && params.flightId
+            ? flights.find(f => f.id === params.flightId) || null
+            : null;
+
         return (
             <div className="flights-container">
-                <button
-                    onClick={() => {
-                        setShowForm(false);
-                        setEditingFlight(null);
-                        setFormError(null);
-                    }}
-                    className="back-button"
-                >
+                <button onClick={handleBackToList} className="back-button">
                     ← Back to List
                 </button>
                 <FlightForm
                     onSubmit={editingFlight ? handleUpdateFlight : handleCreateFlight}
-                    onCancel={() => {
-                        setShowForm(false);
-                        setEditingFlight(null);
-                        setFormError(null);
-                    }}
+                    onCancel={handleBackToList}
                     initialData={editingFlight || undefined}
                     isEditing={!!editingFlight}
                     serverError={formError}
@@ -186,12 +195,20 @@ const FlightsManager: React.FC = () => {
         );
     }
 
+
     return (
+
         <div className="flights-container">
+            <div className="page-header">
+                <button onClick={() => navigate('/')} className="back-to-home">
+                    ← Back to Home
+                </button>
+            </div>
+
             <div className="flights-header">
                 <h1>Flights Management</h1>
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={handleCreateFlightNavigate}
                     className="create-button"
                 >
                     + Create New Flight
@@ -233,7 +250,7 @@ const FlightsManager: React.FC = () => {
                     flights.map((flight) => (
                         <div key={flight.id} className="flight-card">
                             <div className="flight-card-header">
-                                <h3 onClick={() => setSelectedFlight(flight.id)} className="flight-title">
+                                <h3 onClick={() => handleViewFlight(flight.id)} className="flight-title">
                                     {flight.airline} {flight.flightNumber}
                                 </h3>
                                 <div className="flight-card-actions">
@@ -259,8 +276,8 @@ const FlightsManager: React.FC = () => {
                             <p><strong>Arrival:</strong> {new Date(flight.arrivalTime).toLocaleString()}</p>
                             <p><strong>Status:</strong>
                                 <span className={`status ${flight.status.toLowerCase()}`}>
-                  {flight.status}
-                </span>
+                                    {flight.status}
+                                </span>
                             </p>
                             <p><strong>Aircraft:</strong> {flight.aircraftType}</p>
                             <p><strong>Gate:</strong> {flight.gate} (Terminal {flight.terminal})</p>
@@ -270,7 +287,8 @@ const FlightsManager: React.FC = () => {
                 )}
             </div>
         </div>
-    );
+    )
+        ;
 };
 
 export default FlightsManager;
