@@ -52,8 +52,13 @@ export interface FlightSearchRequest {
     airline?: string;
     origin?: string;
     destination?: string;
-    status?: FlightStatus;
-    departureDate?: string;
+    aircraftType?: string;
+    departureFrom?: string;
+    departureTo?: string;
+    arrivalFrom?: string;
+    arrivalTo?: string;
+    priceMin?: number;
+    priceMax?: number;
 }
 
 export interface PaginationParams {
