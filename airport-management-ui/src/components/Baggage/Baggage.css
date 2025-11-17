@@ -1,0 +1,448 @@
+.baggage-form-container,
+.baggage-details-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-header {
+    margin-bottom: 30px;
+}
+
+.form-header h1 {
+    color: #2c3e50;
+    margin: 20px 0;
+    font-size: 2rem;
+}
+
+.back-button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background: #5a6268;
+}
+
+.baggage-form {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-group small {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.submit-button {
+    background: #28a745;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.cancel-button {
+    background: #6c757d;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: #5a6268;
+}
+
+.action-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.action-button.secondary {
+    background: #3498db;
+    color: white;
+}
+
+.action-button.secondary:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.action-button.warning {
+    background: #f39c12;
+    color: white;
+}
+
+.action-button.warning:hover {
+    background: #e67e22;
+    transform: translateY(-1px);
+}
+
+.baggage-details {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.baggage-details h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row strong {
+    color: #555;
+    font-weight: 600;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.status.checked_in {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.screened {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.status.loaded {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.status.in_transit {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.status.arrived {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.delivered {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status.offloaded {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status.lost {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.operations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.operation-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e8ed;
+    transition: all 0.3s ease;
+}
+
+.operation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.operation-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.operation-card h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.operation-card p {
+    color: #5d6d7e;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.input-group input:disabled {
+    background-color: #f8f9fa;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.operation-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.operation-button.secondary {
+    background: #3498db;
+    color: white;
+}
+
+.operation-button.warning {
+    background: #f39c12;
+    color: white;
+}
+
+.operation-button:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.operation-button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Error and loading states */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.error {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #dc3545;
+    background: #f8d7da;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .baggage-form-container,
+    .baggage-details-container {
+        padding: 15px;
+    }
+
+    .operations-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .operation-card {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .form-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .baggage-details h3 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .baggage-form {
+        padding: 20px 15px;
+    }
+
+    .operation-card {
+        padding: 15px;
+    }
+
+    .operation-icon {
+        font-size: 2rem;
+    }
+
+    .submit-button,
+    .cancel-button,
+    .action-button,
+    .operation-button {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+}
