@@ -2,83 +2,122 @@
   {
     "flightNumber": "EK101",
     "passportNumber": "AB123456",
-    "seatNumbers": ["12A"],
+    "seatNumbers": [
+      "12A"
+    ],
     "baggages": [
-      { "weight": 23.5 },
-      { "weight": 18.2 }
+      {
+        "weight": 23.5
+      },
+      {
+        "weight": 18.2
+      }
     ]
   },
   {
     "flightNumber": "DL205",
     "passportNumber": "ZX98765",
-    "seatNumbers": ["14C"],
+    "seatNumbers": [
+      "14C"
+    ],
     "baggages": [
-      { "weight": 20.0 }
+      {
+        "weight": 20.0
+      }
     ]
   },
   {
     "flightNumber": "UA330",
     "passportNumber": "CA654321",
-    "seatNumbers": ["7B"],
+    "seatNumbers": [
+      "7B"
+    ],
     "baggages": [
-      { "weight": 25.0 }
+      {
+        "weight": 25.0
+      }
     ]
   },
   {
     "flightNumber": "LH789",
     "passportNumber": "SP123456",
-    "seatNumbers": ["2A"],
+    "seatNumbers": [
+      "2A"
+    ],
     "baggages": [
-      { "weight": 19.5 }
+      {
+        "weight": 19.5
+      }
     ]
   },
   {
     "flightNumber": "AF450",
     "passportNumber": "AB123456",
-    "seatNumbers": ["9C"],
+    "seatNumbers": [
+      "9C"
+    ],
     "baggages": [
-      { "weight": 15.0 }
+      {
+        "weight": 15.0
+      }
     ]
   },
   {
     "flightNumber": "UA330",
     "passportNumber": "DE123456",
-    "seatNumbers": ["21D"],
+    "seatNumbers": [
+      "21D"
+    ],
     "baggages": [
-      { "weight": 22.0 },
-      { "weight": 17.5 }
+      {
+        "weight": 22.0
+      },
+      {
+        "weight": 17.5
+      }
     ]
   },
   {
     "flightNumber": "AI174",
     "passportNumber": "IR1234",
-    "seatNumbers": ["15B"],
+    "seatNumbers": [
+      "15B"
+    ],
     "baggages": [
-      { "weight": 24.0 }
+      {
+        "weight": 24.0
+      }
     ]
   },
   {
     "flightNumber": "BA150",
     "passportNumber": "SK123456",
-    "seatNumbers": ["3F"],
+    "seatNumbers": [
+      "3F"
+    ],
     "baggages": [
-      { "weight": 19.0 }
+      {
+        "weight": 19.0
+      }
     ]
   },
   {
     "flightNumber": "IB6251",
     "passportNumber": "CA654321",
-    "seatNumbers": ["11A"],
+    "seatNumbers": [
+      "11A"
+    ],
     "baggages": [
-      { "weight": 21.0 }
+      {
+        "weight": 21.0
+      }
     ]
   },
   {
     "flightNumber": "QF12",
     "passportNumber": "EG543210",
-    "seatNumbers": ["1K"],
-    "baggages": [
-      { "weight": 26.0 }
+    "seatNumbers": [
+      "1K"
     ]
   }
 ]
