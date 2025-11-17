@@ -1,5 +1,5 @@
 import React from 'react';
-import {type PassengerResponse, Gender} from '../types/passenger';
+import {type PassengerResponse, Gender} from '../../types/passenger.ts';
 import './PassengerList.css';
 
 interface PassengerListProps {

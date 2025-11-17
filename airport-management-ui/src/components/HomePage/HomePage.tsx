@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
@@ -38,6 +38,34 @@ const HomePage: React.FC = () => {
                     </ul>
                     <button className="card-button">Manage Passengers</button>
                 </div>
+
+                <div className="dashboard-card" onClick={() => navigate('/checkins')}>
+                    <div className="card-icon">🎫</div>
+                    <h2>Check-In Management</h2>
+                    <p>Manage flight check-ins and seat assignments</p>
+                    <ul>
+                        <li>Create new check-ins</li>
+                        <li>View check-in details</li>
+                        <li>Update seat assignments</li>
+                        <li>View check-ins by flight</li>
+                        <li>Cancel check-ins</li>
+                    </ul>
+                    <button className="card-button">Manage Check-Ins</button>
+                </div>
+
+                <div className="dashboard-card" onClick={() => navigate('/baggage')}>
+                    <div className="card-icon">🧳</div>
+                    <h2>Baggage Management</h2>
+                    <p>Manage baggage information and status</p>
+                    <ul>
+                        <li>View baggage details</li>
+                        <li>Update baggage weight</li>
+                        <li>Update baggage status</li>
+                        <li>Track baggage information</li>
+                    </ul>
+                    <button className="card-button">Manage Baggage</button>
+                </div>
+
             </div>
         </div>
     );

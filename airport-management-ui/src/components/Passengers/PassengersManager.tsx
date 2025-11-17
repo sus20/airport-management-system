@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useParams, useLocation} from 'react-router-dom';
-import passengerService, {type ApiErrorResponse} from '../services/passengerService';
-import PassengerForm from './PassengerForm';
-import PassengerList from './PassengerList';
-import PassengerSearch from './PassengerSearch';
-import type {PassengerRequest, PassengerSearchRequest, PassengerResponse} from '../types/passenger';
+import passengerService, {type ApiErrorResponse} from '../../services/passengerService.ts';
+import PassengerForm from './PassengerForm.tsx';
+import PassengerList from './PassengerList.tsx';
+import PassengerSearch from './PassengerSearch.tsx';
+import type {PassengerRequest, PassengerSearchRequest, PassengerResponse} from '../../types/passenger.ts';
 import './PassengersManager.css';
 
 const PassengersManager: React.FC = () => {
@@ -117,7 +117,7 @@ const PassengersManager: React.FC = () => {
         }
     };
 
-    // Navigation handlers
+
     const handleCreatePassengerNavigate = () => {
         navigate('/passengers/create');
     };

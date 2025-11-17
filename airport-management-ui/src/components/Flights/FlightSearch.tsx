@@ -1,6 +1,6 @@
 import React from 'react';
 import {useForm} from 'react-hook-form';
-import {type FlightSearchRequest} from '../types/flight';
+import {type FlightSearchRequest} from '../../types/flight.ts';
 import './FlightSearch.css';
 
 interface FlightSearchProps {

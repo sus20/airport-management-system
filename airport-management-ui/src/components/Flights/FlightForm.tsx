@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
-import {type FlightRequest, FlightStatus} from "../types/flight";
-import type {ApiErrorResponse, ValidationError} from "../services/flightService";
+import {type FlightRequest, FlightStatus} from "../../types/flight.ts";
+import type {ApiErrorResponse, ValidationError} from "../../services/flightService.ts";
 
 import './FlightForm.css'
 

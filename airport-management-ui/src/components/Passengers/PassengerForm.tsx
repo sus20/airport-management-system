@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
-import {type PassengerRequest, Gender} from "../types/passenger";
-import type {ApiErrorResponse, ValidationError} from "../services/passengerService";
+import {type PassengerRequest, Gender} from "../../types/passenger.ts";
+import type {ApiErrorResponse, ValidationError} from "../../services/passengerService.ts";
 import './PassengerForm.css';
 
 interface PassengerFormProps {

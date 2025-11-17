@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import flightService from "../services/flightService";
-import {type Flight, FlightStatus} from '../types/flight';
+import flightService from "../../services/flightService.ts";
+import {type Flight, FlightStatus} from '../../types/flight.ts';
 import './FlightDetails.css'
 
 

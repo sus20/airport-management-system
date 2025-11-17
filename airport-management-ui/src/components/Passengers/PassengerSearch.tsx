@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { type PassengerSearchRequest, Gender } from '../types/passenger';
+import { type PassengerSearchRequest, Gender } from '../../types/passenger.ts';
 import './PassengerSearch.css';
 
 interface PassengerSearchProps {

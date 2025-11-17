@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useParams, useLocation} from 'react-router-dom';
-import flightService, {type ApiErrorResponse} from '../services/flightService';
-import FlightForm from './FlightForm';
-import FlightDetails from './FlightDetails';
-import FlightSearch from './FlightSearch';
-import type {Flight, FlightRequest, FlightSearchRequest, PaginationParams} from '../types/flight';
+import flightService, {type ApiErrorResponse} from '../../services/flightService.ts';
+import FlightForm from './FlightForm.tsx';
+import FlightDetails from './FlightDetails.tsx';
+import FlightSearch from './FlightSearch.tsx';
+import type {Flight, FlightRequest, FlightSearchRequest, PaginationParams} from '../../types/flight.ts';
 import './FlightsManager.css';
 
 const FlightsManager: React.FC = () => {
@@ -25,7 +25,6 @@ const FlightsManager: React.FC = () => {
     const isEditing = params.flightId && location.pathname === `/flights/${params.flightId}/edit`;
 
     useEffect(() => {
-        // Only load flights when we're on the main list view
         if (!isSearching && !isViewingDetails && !isCreating && !isEditing) {
             loadFlights();
         }
