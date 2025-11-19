@@ -1,0 +1,10 @@
+airport-management-ui@0.0.0 D:\OnlineCourses\airport-management-system\airport-management-ui
++-- @hookform/resolvers@5.2.2
++-- @tanstack/react-query@5.90.5
++-- axios@1.12.2
++-- react-dom@19.2.0
++-- react-hook-form@7.65.0
++-- react-router-dom@7.9.4
++-- react@19.2.0
+`-- zod@4.1.12
+
