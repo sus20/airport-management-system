@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t sussap/airport-management-ui:${{ github.event.inputs.tag }} airport-management-ui
+          docker build -f airport-management-ui/docker/Dockerfile -t sussap/airport-management-ui:${{ github.event.inputs.tag }} airport-management-ui
 
       - name: Push Docker Image
         run: |
