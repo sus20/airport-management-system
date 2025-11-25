@@ -1,6 +1,7 @@
 #!/bin/bash
 
 COMPOSE_FILE="docker-compose.yaml"
+COMPOSE_UI_FILE="compose-ui.yaml"
 
 case "$1" in
   up)
@@ -17,6 +18,14 @@ case "$1" in
     echo "💥 Removing all services, networks, and volumes ..."
     docker-compose -f $COMPOSE_FILE down -v --remove-orphans
     ;;
+
+  build)
+      echo "🔨 Building UI image ..."
+      docker-compose -f $COMPOSE_UI_FILE build
+
+      echo "🚀 Running UI services ..."
+      docker-compose -f $COMPOSE_UI_FILE up -d
+      ;;
 
   *)
     echo "Usage: $0 {up|down|delete}"
