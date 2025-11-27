@@ -30,7 +30,6 @@ services:
     networks:
       - shared_net
 
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: zookeeper
@@ -101,16 +100,25 @@ services:
     networks:
       - shared_net
 
+  frontend:
+    image: sussap/airport-management-ui:latest
+    container_name: airport-management-ui
+    ports:
+      - "3000:80"
+    networks:
+      - shared_net
+
   nginx:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - flight-scheduler-service
       - passenger-checkin-service
+      - frontend
     networks:
       - shared_net
 
